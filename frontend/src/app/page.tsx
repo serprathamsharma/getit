@@ -3,6 +3,20 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { analyzeEngineer, getEngineerByUsername } from "@/lib/api";
+import {
+  Search,
+  Sparkles,
+  Cpu,
+  ShieldCheck,
+  Code2,
+  BarChart3,
+  Layers,
+  ArrowRight,
+  UserCheck,
+  Compass,
+  Loader2,
+  Check,
+} from "lucide-react";
 
 export default function Home() {
   const router = useRouter();
@@ -43,7 +57,7 @@ export default function Home() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", position: "relative", overflow: "hidden" }}>
+    <div style={{ minHeight: "100vh", position: "relative", overflow: "hidden", background: "var(--bg-primary)" }}>
       {/* Background Effects */}
       <div className="hero-grid" />
       <div className="orb orb-1" />
@@ -58,39 +72,45 @@ export default function Home() {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          padding: "24px 48px",
+          padding: "24px 64px",
+          maxWidth: "1350px",
+          margin: "0 auto",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
           <div
             style={{
-              width: 36,
-              height: 36,
-              borderRadius: "10px",
+              width: 40,
+              height: 40,
+              borderRadius: "12px",
               background: "var(--gradient-primary)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: "18px",
+              color: "white",
+              boxShadow: "0 4px 12px rgba(218, 103, 71, 0.3)",
             }}
           >
-            ◎
+            <Sparkles size={22} />
           </div>
           <span
             style={{
-              fontSize: "20px",
-              fontWeight: 700,
+              fontSize: "22px",
+              fontWeight: 800,
               letterSpacing: "-0.02em",
+              color: "var(--text-primary)",
             }}
           >
-            Talent<span className="gradient-text">Radar</span>
+            Talent<span style={{ color: "var(--accent-primary)" }}>Radar</span>
           </span>
         </div>
         <div style={{ display: "flex", gap: "12px" }}>
           <button
             className="btn-ghost"
             onClick={() => router.push("/search")}
+            style={{ gap: "8px" }}
           >
+            <Compass size={16} />
             Browse Engineers
           </button>
         </div>
@@ -105,9 +125,11 @@ export default function Home() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          minHeight: "calc(100vh - 100px)",
-          padding: "0 24px",
+          minHeight: "calc(100vh - 120px)",
+          padding: "20px 24px",
           textAlign: "center",
+          maxWidth: "960px",
+          margin: "0 auto",
         }}
       >
         {/* Badge */}
@@ -117,57 +139,49 @@ export default function Home() {
             display: "inline-flex",
             alignItems: "center",
             gap: "8px",
-            padding: "6px 16px",
-            background: "rgba(99, 102, 241, 0.08)",
-            border: "1px solid rgba(99, 102, 241, 0.15)",
+            padding: "8px 18px",
+            background: "var(--bg-accent-soft)",
+            border: "1px solid rgba(218, 103, 71, 0.25)",
             borderRadius: "30px",
             fontSize: "13px",
-            color: "var(--text-accent)",
-            marginBottom: "32px",
+            fontWeight: 600,
+            color: "var(--accent-primary)",
+            marginBottom: "28px",
+            boxShadow: "0 2px 8px rgba(218, 103, 71, 0.08)",
           }}
         >
-          <span
-            style={{
-              width: 6,
-              height: 6,
-              borderRadius: "50%",
-              background: "var(--accent-success)",
-              display: "inline-block",
-            }}
-          />
-          AI-Powered Talent Intelligence
+          <Sparkles size={14} />
+          <span>Claude-Powered Talent Intelligence</span>
         </div>
 
         {/* Title */}
         <h1
-          className="animate-slide-up"
+          className="animate-slide-up font-serif-claude"
           style={{
-            fontSize: "clamp(40px, 6vw, 72px)",
-            fontWeight: 800,
-            lineHeight: 1.1,
-            letterSpacing: "-0.03em",
-            maxWidth: "800px",
+            fontSize: "clamp(46px, 6vw, 76px)",
+            fontWeight: 400,
+            lineHeight: 1.05,
+            color: "var(--text-primary)",
             marginBottom: "24px",
+            letterSpacing: "-0.01em",
           }}
         >
-          Discover{" "}
-          <span className="gradient-text">exceptional</span>{" "}
-          engineers through code
+          Discover <span style={{ color: "var(--accent-primary)", fontStyle: "italic" }}>exceptional</span> engineers through deep code analysis
         </h1>
 
         {/* Subtitle */}
         <p
           className="animate-slide-up stagger-1"
           style={{
-            fontSize: "18px",
+            fontSize: "19px",
             color: "var(--text-secondary)",
-            maxWidth: "580px",
-            lineHeight: 1.7,
-            marginBottom: "48px",
+            maxWidth: "640px",
+            lineHeight: 1.65,
+            marginBottom: "44px",
+            fontWeight: 400,
           }}
         >
-          Deep GitHub analysis powered by AI. Evidence-based profiles,
-          multi-dimensional scoring, and actionable hiring intelligence.
+          Evidence-based GitHub profiles, multi-dimensional scoring, and actionable hiring synthesis tailored for engineering leaders.
         </p>
 
         {/* Search Form */}
@@ -178,33 +192,32 @@ export default function Home() {
             display: "flex",
             gap: "12px",
             width: "100%",
-            maxWidth: "560px",
-            marginBottom: "16px",
+            maxWidth: "580px",
+            marginBottom: "18px",
           }}
         >
           <div style={{ flex: 1, position: "relative" }}>
             <span
               style={{
                 position: "absolute",
-                left: "18px",
+                left: "20px",
                 top: "50%",
                 transform: "translateY(-50%)",
                 color: "var(--text-muted)",
-                fontSize: "18px",
               }}
             >
-              @
+              <Search size={18} />
             </span>
             <input
               type="text"
               className="input"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Enter GitHub username..."
+              placeholder="Enter GitHub username (e.g. torvalds)..."
               disabled={analyzing}
               style={{
-                paddingLeft: "40px",
-                height: "56px",
+                paddingLeft: "50px",
+                height: "58px",
                 fontSize: "16px",
               }}
             />
@@ -214,28 +227,22 @@ export default function Home() {
             className="btn-primary"
             disabled={analyzing || !username.trim()}
             style={{
-              height: "56px",
-              minWidth: "160px",
+              height: "58px",
+              minWidth: "170px",
               fontSize: "15px",
+              gap: "10px",
             }}
           >
             {analyzing ? (
               <>
-                <span
-                  style={{
-                    width: 16,
-                    height: 16,
-                    border: "2px solid rgba(255,255,255,0.3)",
-                    borderTopColor: "white",
-                    borderRadius: "50%",
-                    display: "inline-block",
-                    animation: "spin 0.8s linear infinite",
-                  }}
-                />
+                <Loader2 size={18} className="animate-spin" />
                 Analyzing...
               </>
             ) : (
-              <>🔍 Analyze</>
+              <>
+                <Sparkles size={18} />
+                Analyze User
+              </>
             )}
           </button>
         </form>
@@ -246,30 +253,39 @@ export default function Home() {
               color: "var(--accent-danger)",
               fontSize: "14px",
               marginBottom: "16px",
-              padding: "8px 16px",
-              background: "rgba(239, 68, 68, 0.1)",
+              padding: "10px 18px",
+              background: "#FEE2E2",
               borderRadius: "var(--radius-sm)",
-              border: "1px solid rgba(239, 68, 68, 0.2)",
+              border: "1px solid #FCA5A5",
             }}
           >
             {error}
           </div>
         )}
 
-        {/* Hint */}
-        <p
+        {/* Hints */}
+        <div
           className="animate-fade-in stagger-3"
           style={{
-            fontSize: "13px",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            fontSize: "14px",
             color: "var(--text-muted)",
-            marginBottom: "64px",
+            marginBottom: "72px",
+            flexWrap: "wrap",
+            justifyContent: "center",
           }}
         >
-          Try: <HintButton name="torvalds" onClick={setUsername} />,{" "}
-          <HintButton name="gaearon" onClick={setUsername} />,{" "}
-          <HintButton name="sindresorhus" onClick={setUsername} />,{" "}
+          <span>Popular profiles:</span>
+          <HintButton name="torvalds" onClick={setUsername} />
+          <span>•</span>
+          <HintButton name="gaearon" onClick={setUsername} />
+          <span>•</span>
+          <HintButton name="sindresorhus" onClick={setUsername} />
+          <span>•</span>
           <HintButton name="tj" onClick={setUsername} />
-        </p>
+        </div>
 
         {/* Stats Grid */}
         <div
@@ -279,12 +295,12 @@ export default function Home() {
             gridTemplateColumns: "repeat(3, 1fr)",
             gap: "24px",
             width: "100%",
-            maxWidth: "700px",
+            maxWidth: "760px",
           }}
         >
-          <StatCard icon="🧠" value="50+" label="Analysis Signals" />
-          <StatCard icon="⚡" value="4-Layer" label="Deep Pipeline" />
-          <StatCard icon="🛡️" value="Anti-Gaming" label="Fraud Detection" />
+          <StatCard icon={<Cpu size={24} color="var(--accent-primary)" />} value="50+" label="Analysis Signals" />
+          <StatCard icon={<Layers size={24} color="var(--accent-primary)" />} value="4-Layer" label="Deep Pipeline" />
+          <StatCard icon={<ShieldCheck size={24} color="var(--accent-primary)" />} value="Anti-Gaming" label="Fraud Detection" />
         </div>
 
         {/* Feature Cards */}
@@ -292,40 +308,31 @@ export default function Home() {
           className="animate-slide-up stagger-5"
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-            gap: "20px",
+            gridTemplateColumns: "repeat(auto-fit, minmax(270px, 1fr))",
+            gap: "24px",
             width: "100%",
-            maxWidth: "900px",
+            maxWidth: "960px",
             marginTop: "64px",
-            paddingBottom: "80px",
+            paddingBottom: "90px",
           }}
         >
           <FeatureCard
-            icon="📊"
+            icon={<BarChart3 size={24} color="var(--accent-primary)" />}
             title="Multi-Dimensional Scoring"
-            description="Technical depth, output quality, consistency, collaboration, and specialization — weighted composite scoring."
+            description="Evaluates technical depth, output quality, consistency, collaboration, and specialization with evidence-weighted composite scoring."
           />
           <FeatureCard
-            icon="🤖"
-            title="AI-Powered Insights"
-            description="Three-stage LLM pipeline generates specific, evidence-based hiring intelligence — not generic summaries."
+            icon={<Sparkles size={24} color="var(--accent-primary)" />}
+            title="AI Profile Synthesis"
+            description="Generates concrete, specific hiring intelligence and candidate summaries — highlighting genuine strengths and growth areas."
           />
           <FeatureCard
-            icon="🔬"
-            title="Code Intelligence"
-            description="Analyzes repos, commits, PRs, languages, testing patterns, CI/CD configs, and architecture decisions."
+            icon={<Code2 size={24} color="var(--accent-primary)" />}
+            title="Repository Intelligence"
+            description="Analyzes commits, languages, test suites, CI/CD pipeline configs, documentation clarity, and architectural complexity."
           />
         </div>
       </main>
-
-      {/* Spinner animation */}
-      <style jsx>{`
-        @keyframes spin {
-          to {
-            transform: rotate(360deg);
-          }
-        }
-      `}</style>
     </div>
   );
 }
@@ -344,16 +351,17 @@ function HintButton({
       style={{
         background: "none",
         border: "none",
-        color: "var(--text-accent)",
+        color: "var(--accent-primary)",
         cursor: "pointer",
         fontFamily: "'JetBrains Mono', monospace",
         fontSize: "13px",
+        fontWeight: 600,
         textDecoration: "underline",
         textDecorationStyle: "dotted",
-        textUnderlineOffset: "3px",
+        textUnderlineOffset: "4px",
       }}
     >
-      {name}
+      @{name}
     </button>
   );
 }
@@ -363,7 +371,7 @@ function StatCard({
   value,
   label,
 }: {
-  icon: string;
+  icon: React.ReactNode;
   value: string;
   label: string;
 }) {
@@ -373,16 +381,24 @@ function StatCard({
       style={{
         padding: "24px",
         textAlign: "center",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
       }}
     >
-      <div style={{ fontSize: "24px", marginBottom: "8px" }}>{icon}</div>
+      <div style={{ marginBottom: "10px" }}>{icon}</div>
       <div
-        className="gradient-text"
-        style={{ fontSize: "24px", fontWeight: 700, marginBottom: "4px" }}
+        style={{
+          fontSize: "26px",
+          fontWeight: 800,
+          color: "var(--text-primary)",
+          marginBottom: "4px",
+          fontFamily: "'Instrument Serif', serif",
+        }}
       >
         {value}
       </div>
-      <div style={{ fontSize: "13px", color: "var(--text-secondary)" }}>
+      <div style={{ fontSize: "13px", color: "var(--text-secondary)", fontWeight: 500 }}>
         {label}
       </div>
     </div>
@@ -394,7 +410,7 @@ function FeatureCard({
   title,
   description,
 }: {
-  icon: string;
+  icon: React.ReactNode;
   title: string;
   description: string;
 }) {
@@ -411,21 +427,22 @@ function FeatureCard({
           width: 48,
           height: 48,
           borderRadius: "var(--radius-md)",
-          background: "rgba(99, 102, 241, 0.1)",
+          background: "var(--bg-accent-soft)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          fontSize: "22px",
           marginBottom: "20px",
+          border: "1px solid rgba(218, 103, 71, 0.15)",
         }}
       >
         {icon}
       </div>
       <h3
         style={{
-          fontSize: "16px",
-          fontWeight: 600,
-          marginBottom: "8px",
+          fontSize: "17px",
+          fontWeight: 700,
+          marginBottom: "10px",
+          color: "var(--text-primary)",
         }}
       >
         {title}

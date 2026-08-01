@@ -4,6 +4,23 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getEngineers, analyzeEngineer, getEngineerByUsername, type EngineerCard } from "@/lib/api";
+import {
+  Search,
+  Sparkles,
+  ArrowLeft,
+  Users,
+  Award,
+  Star,
+  GitFork,
+  ChevronRight,
+  Loader2,
+  PlusCircle,
+  SlidersHorizontal,
+  FolderGit2,
+  CheckCircle2,
+  Building2,
+  MapPin,
+} from "lucide-react";
 
 export default function SearchPage() {
   const router = useRouter();
@@ -70,7 +87,6 @@ export default function SearchPage() {
     setError("");
     
     try {
-      // Don't re-analyze if already exists
       try {
         const existing = await getEngineerByUsername(term);
         if (existing && existing.github_username) {
@@ -99,7 +115,7 @@ export default function SearchPage() {
       <header
         style={{
           borderBottom: "1px solid var(--border-subtle)",
-          padding: "20px 48px",
+          padding: "18px 48px",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -124,20 +140,20 @@ export default function SearchPage() {
         >
           <div
             style={{
-              width: 32,
-              height: 32,
-              borderRadius: "8px",
+              width: 34,
+              height: 34,
+              borderRadius: "10px",
               background: "var(--gradient-primary)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: "16px",
+              color: "white",
             }}
           >
-            ◎
+            <Sparkles size={18} />
           </div>
-          <span style={{ fontSize: "18px", fontWeight: 700 }}>
-            Talent<span className="gradient-text">Radar</span>
+          <span style={{ fontSize: "20px", fontWeight: 800 }}>
+            Talent<span style={{ color: "var(--accent-primary)" }}>Radar</span>
           </span>
         </button>
 
@@ -145,74 +161,107 @@ export default function SearchPage() {
         <div
           style={{
             display: "flex",
-            gap: "24px",
-            fontSize: "13px",
+            alignItems: "center",
+            gap: "8px",
+            fontSize: "14px",
             color: "var(--text-secondary)",
+            background: "var(--bg-card)",
+            padding: "6px 16px",
+            borderRadius: "20px",
+            border: "1px solid var(--border-subtle)",
           }}
         >
+          <Users size={15} color="var(--accent-primary)" />
           <span>
-            <strong style={{ color: "var(--text-primary)" }}>{total}</strong>{" "}
-            engineers indexed
+            <strong style={{ color: "var(--text-primary)", fontWeight: 700 }}>{total}</strong> engineers indexed
           </span>
         </div>
       </header>
 
       {/* Main Content */}
-      <div style={{ padding: "32px 48px", maxWidth: "1400px", margin: "0 auto" }}>
+      <div style={{ padding: "40px 48px", maxWidth: "1400px", margin: "0 auto" }}>
         {/* Search & Controls */}
         <div
           style={{
             display: "flex",
             gap: "16px",
             marginBottom: "32px",
-            alignItems: "flex-start",
+            alignItems: "center",
             flexWrap: "wrap",
           }}
         >
           <form
             onSubmit={handleSearch}
-            style={{ flex: 1, minWidth: "300px", display: "flex", gap: "10px" }}
+            style={{ flex: 1, minWidth: "320px", display: "flex", gap: "10px" }}
           >
-            <input
-              type="text"
-              className="input"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Search by name, username, or archetype..."
-              style={{ height: "48px" }}
-            />
-            <button type="submit" className="btn-primary" style={{ height: "48px" }}>
+            <div style={{ position: "relative", flex: 1 }}>
+              <span
+                style={{
+                  position: "absolute",
+                  left: "16px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  color: "var(--text-muted)",
+                }}
+              >
+                <Search size={18} />
+              </span>
+              <input
+                type="text"
+                className="input"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                placeholder="Search by name, username, or archetype..."
+                style={{ height: "50px", paddingLeft: "46px" }}
+              />
+            </div>
+            <button type="submit" className="btn-primary" style={{ height: "50px" }}>
               Search
             </button>
           </form>
+
           <button
             onClick={handleAnalyze}
             disabled={analyzing || !searchInput.trim()}
             className="btn-ghost"
-            style={{ height: "48px", whiteSpace: "nowrap" }}
+            style={{ height: "50px", gap: "8px" }}
           >
-            {analyzing ? "Analyzing..." : "➕ Analyze New User"}
+            {analyzing ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                Analyzing...
+              </>
+            ) : (
+              <>
+                <PlusCircle size={16} color="var(--accent-primary)" />
+                Analyze New User
+              </>
+            )}
           </button>
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="input"
-            style={{ width: "200px", height: "48px", cursor: "pointer" }}
-          >
-            <option value="talent_score">Sort: Talent Score</option>
-            <option value="profile_confidence">Sort: Confidence</option>
-            <option value="updated_at">Sort: Recently Updated</option>
-          </select>
+
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <SlidersHorizontal size={16} color="var(--text-muted)" />
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="input"
+              style={{ width: "210px", height: "50px", cursor: "pointer" }}
+            >
+              <option value="talent_score">Sort: Talent Score</option>
+              <option value="profile_confidence">Sort: Confidence</option>
+              <option value="updated_at">Sort: Recently Updated</option>
+            </select>
+          </div>
         </div>
 
         {error && (
           <div
             style={{
               color: "var(--accent-danger)",
-              padding: "12px 16px",
-              background: "rgba(239, 68, 68, 0.1)",
+              padding: "14px 18px",
+              background: "#FEE2E2",
               borderRadius: "var(--radius-sm)",
-              border: "1px solid rgba(239, 68, 68, 0.2)",
+              border: "1px solid #FCA5A5",
               marginBottom: "24px",
               fontSize: "14px",
             }}
@@ -226,15 +275,15 @@ export default function SearchPage() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
-              gap: "20px",
+              gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))",
+              gap: "24px",
             }}
           >
             {[...Array(6)].map((_, i) => (
               <div
                 key={i}
                 className="skeleton"
-                style={{ height: "240px", borderRadius: "var(--radius-lg)" }}
+                style={{ height: "260px", borderRadius: "var(--radius-lg)" }}
               />
             ))}
           </div>
@@ -242,17 +291,36 @@ export default function SearchPage() {
           <div
             style={{
               textAlign: "center",
-              padding: "80px 20px",
+              padding: "90px 20px",
               color: "var(--text-secondary)",
+              background: "var(--bg-card)",
+              borderRadius: "var(--radius-xl)",
+              border: "1px solid var(--border-subtle)",
             }}
           >
-            <div style={{ fontSize: "48px", marginBottom: "16px" }}>🔍</div>
-            <h3 style={{ fontSize: "20px", marginBottom: "8px", color: "var(--text-primary)" }}>
+            <div
+              style={{
+                width: 64,
+                height: 64,
+                borderRadius: "50%",
+                background: "var(--bg-accent-soft)",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "var(--accent-primary)",
+                marginBottom: "20px",
+              }}
+            >
+              <Search size={30} />
+            </div>
+            <h3
+              className="font-serif-claude"
+              style={{ fontSize: "28px", marginBottom: "8px", color: "var(--text-primary)" }}
+            >
               No engineers found
             </h3>
-            <p style={{ fontSize: "14px", marginBottom: "24px" }}>
-              Analyze a GitHub user to get started. Enter a username above and
-              click &quot;Analyze New User&quot;.
+            <p style={{ fontSize: "15px", maxWidth: "460px", margin: "0 auto 24px" }}>
+              Enter a GitHub username above and click &quot;Analyze New User&quot; to fetch and score their profile live.
             </p>
           </div>
         ) : (
@@ -260,16 +328,13 @@ export default function SearchPage() {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
-                gap: "20px",
+                gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))",
+                gap: "24px",
               }}
             >
               {engineers.map((eng, i) => (
-                <Link href={`/profile/${eng.github_username}`} key={eng.id} style={{ textDecoration: 'none', color: 'inherit' }}>
-                  <EngineerCardComponent
-                    engineer={eng}
-                    index={i}
-                  />
+                <Link href={`/profile/${eng.github_username}`} key={eng.id} style={{ textDecoration: "none", color: "inherit" }}>
+                  <EngineerCardComponent engineer={eng} index={i} />
                 </Link>
               ))}
             </div>
@@ -280,8 +345,9 @@ export default function SearchPage() {
                 style={{
                   display: "flex",
                   justifyContent: "center",
-                  gap: "8px",
-                  marginTop: "40px",
+                  alignItems: "center",
+                  gap: "12px",
+                  marginTop: "48px",
                 }}
               >
                 <button
@@ -293,11 +359,10 @@ export default function SearchPage() {
                 </button>
                 <span
                   style={{
-                    padding: "10px 20px",
+                    padding: "8px 16px",
                     color: "var(--text-secondary)",
                     fontSize: "14px",
-                    display: "flex",
-                    alignItems: "center",
+                    fontWeight: 600,
                   }}
                 >
                   Page {page} of {totalPages}
@@ -346,154 +411,181 @@ function EngineerCardComponent({
       style={{
         padding: "28px",
         cursor: "pointer",
-        animationDelay: `${index * 0.05}s`,
-        opacity: 0,
+        animationDelay: `${index * 0.04}s`,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        height: "100%",
       }}
     >
-      {/* Header */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          gap: "16px",
-          marginBottom: "20px",
-        }}
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={engineer.avatar_url || `https://ui-avatars.com/api/?name=${engineer.github_username}&background=6366f1&color=fff`}
-          alt={engineer.github_username}
-          width={52}
-          height={52}
-          style={{
-            borderRadius: "var(--radius-md)",
-            border: "2px solid var(--border-subtle)",
-          }}
-        />
-        <div style={{ flex: 1 }}>
-          <h3
-            style={{
-              fontSize: "16px",
-              fontWeight: 600,
-              marginBottom: "2px",
-              lineHeight: 1.3,
-            }}
-          >
-            {engineer.name || engineer.github_username}
-          </h3>
-          <p
-            style={{
-              fontSize: "13px",
-              color: "var(--text-muted)",
-              fontFamily: "'JetBrains Mono', monospace",
-            }}
-          >
-            @{engineer.github_username}
-          </p>
-        </div>
-        {/* Score */}
-        <div style={{ textAlign: "right" }}>
-          <div
-            className="score-gradient"
-            style={{ fontSize: "28px", fontWeight: 800, lineHeight: 1 }}
-          >
-            {Math.round(score)}
-          </div>
-          <div
-            style={{
-              fontSize: "10px",
-              color: "var(--text-muted)",
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
-            }}
-          >
-            Score
-          </div>
-        </div>
-      </div>
-
-      {/* Score Bar */}
-      <div className="score-bar" style={{ marginBottom: "16px" }}>
-        <div className="score-bar-fill" style={{ width: `${score}%` }} />
-      </div>
-
-      {/* Archetype & Confidence */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "16px",
-        }}
-      >
-        {engineer.archetype && (
-          <span className="tag">{engineer.archetype}</span>
-        )}
-        <span
-          className={confidenceClass}
-          style={{
-            padding: "3px 10px",
-            borderRadius: "20px",
-            fontSize: "11px",
-            fontWeight: 600,
-          }}
-        >
-          {(confidence * 100).toFixed(0)}% confident
-        </span>
-      </div>
-
-      {/* Languages */}
-      {topLangs.length > 0 && (
-        <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-          {topLangs.map(([lang, pct]) => (
-            <span
-              key={lang}
-              style={{
-                padding: "3px 10px",
-                borderRadius: "12px",
-                fontSize: "11px",
-                fontWeight: 500,
-                background: "var(--bg-tertiary)",
-                color: "var(--text-secondary)",
-              }}
-            >
-              {lang}{" "}
-              <span style={{ color: "var(--text-muted)" }}>
-                {pct.toFixed(0)}%
-              </span>
-            </span>
-          ))}
-        </div>
-      )}
-
-      {/* Stars */}
-      {engineer.would_hire_score !== null && (
+      <div>
+        {/* Header */}
         <div
           style={{
-            marginTop: "16px",
-            paddingTop: "16px",
-            borderTop: "1px solid var(--border-subtle)",
             display: "flex",
+            alignItems: "flex-start",
+            gap: "16px",
+            marginBottom: "20px",
+          }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={engineer.avatar_url || `https://ui-avatars.com/api/?name=${engineer.github_username}&background=DA6747&color=fff`}
+            alt={engineer.github_username}
+            width={54}
+            height={54}
+            style={{
+              borderRadius: "var(--radius-md)",
+              border: "2px solid var(--border-subtle)",
+              boxShadow: "var(--shadow-sm)",
+            }}
+          />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <h3
+              style={{
+                fontSize: "17px",
+                fontWeight: 700,
+                marginBottom: "2px",
+                lineHeight: 1.3,
+                color: "var(--text-primary)",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {engineer.name || engineer.github_username}
+            </h3>
+            <p
+              style={{
+                fontSize: "13px",
+                color: "var(--text-muted)",
+                fontFamily: "'JetBrains Mono', monospace",
+              }}
+            >
+              @{engineer.github_username}
+            </p>
+          </div>
+
+          {/* Score Badge */}
+          <div
+            style={{
+              textAlign: "center",
+              background: "var(--bg-accent-soft)",
+              padding: "8px 12px",
+              borderRadius: "14px",
+              border: "1px solid rgba(218, 103, 71, 0.2)",
+            }}
+          >
+            <div
+              style={{
+                fontSize: "24px",
+                fontWeight: 800,
+                lineHeight: 1,
+                color: "var(--accent-primary)",
+                fontFamily: "'Instrument Serif', serif",
+              }}
+            >
+              {Math.round(score)}
+            </div>
+            <div
+              style={{
+                fontSize: "10px",
+                color: "var(--text-muted)",
+                textTransform: "uppercase",
+                letterSpacing: "0.05em",
+                marginTop: "2px",
+                fontWeight: 600,
+              }}
+            >
+              Score
+            </div>
+          </div>
+        </div>
+
+        {/* Score Bar */}
+        <div className="score-bar" style={{ marginBottom: "16px" }}>
+          <div className="score-bar-fill" style={{ width: `${score}%` }} />
+        </div>
+
+        {/* Archetype & Confidence */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
             alignItems: "center",
+            marginBottom: "16px",
+            flexWrap: "wrap",
             gap: "8px",
           }}
         >
-          <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>
-            Would Hire:
+          {engineer.archetype ? (
+            <span className="tag">
+              <Award size={13} />
+              {engineer.archetype}
+            </span>
+          ) : (
+            <span />
+          )}
+          <span
+            className={confidenceClass}
+            style={{
+              padding: "4px 10px",
+              borderRadius: "20px",
+              fontSize: "11px",
+              fontWeight: 600,
+            }}
+          >
+            {(confidence * 100).toFixed(0)}% confident
+          </span>
+        </div>
+
+        {/* Languages */}
+        {topLangs.length > 0 && (
+          <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "16px" }}>
+            {topLangs.map(([lang, pct]) => (
+              <span
+                key={lang}
+                style={{
+                  padding: "3px 10px",
+                  borderRadius: "12px",
+                  fontSize: "11px",
+                  fontWeight: 500,
+                  background: "var(--bg-tertiary)",
+                  color: "var(--text-secondary)",
+                }}
+              >
+                {lang}{" "}
+                <span style={{ color: "var(--text-muted)" }}>
+                  {pct.toFixed(0)}%
+                </span>
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Footer / Star Recommendation */}
+      {engineer.would_hire_score !== null && (
+        <div
+          style={{
+            paddingTop: "14px",
+            borderTop: "1px solid var(--border-subtle)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <span style={{ fontSize: "12px", color: "var(--text-muted)", fontWeight: 500 }}>
+            Hire Match:
           </span>
           <div className="star-rating">
             {[1, 2, 3, 4, 5].map((s) => (
-              <span
+              <Star
                 key={s}
-                className={
-                  s <= Math.round(engineer.would_hire_score || 0)
-                    ? "star-filled"
-                    : "star-empty"
-                }
-                style={{ fontSize: "14px" }}
-              >
-                ★
-              </span>
+                size={14}
+                fill={s <= Math.round(engineer.would_hire_score || 0) ? "var(--accent-amber)" : "none"}
+                color={s <= Math.round(engineer.would_hire_score || 0) ? "var(--accent-amber)" : "var(--border-default)"}
+              />
             ))}
           </div>
         </div>
