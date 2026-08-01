@@ -23,8 +23,8 @@ import {
   Clock,
   ShieldAlert,
   Layers,
-  ChevronRight,
   GitFork,
+  FileText,
 } from "lucide-react";
 
 export default function ProfilePage({
@@ -63,29 +63,18 @@ export default function ProfilePage({
           flexDirection: "column",
           gap: "16px",
           background: "var(--bg-primary)",
+          padding: "40px",
         }}
       >
-        <div
-          style={{
-            width: 64,
-            height: 64,
-            borderRadius: "50%",
-            background: "#FEE2E2",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "var(--accent-danger)",
-          }}
-        >
-          <AlertTriangle size={32} />
+        <div className="rubber-stamp-circle" style={{ width: "90px", height: "90px" }}>
+          MISSING
         </div>
-        <h2 className="font-serif-claude" style={{ fontSize: "32px", color: "var(--text-primary)" }}>
-          Profile Not Found
+        <h2 className="font-headline" style={{ fontSize: "32px", fontWeight: 800 }}>
+          DOSSIER NOT FOUND IN GAZETTE ARCHIVE
         </h2>
-        <p style={{ color: "var(--text-secondary)", fontSize: "15px" }}>{error}</p>
-        <button className="btn-primary" onClick={() => router.push("/")} style={{ gap: "8px" }}>
-          <ArrowLeft size={16} />
-          Back to Home
+        <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "var(--text-secondary)" }}>{error}</p>
+        <button className="btn-vintage" onClick={() => router.push("/")}>
+          ← RETURN TO FRONT PAGE
         </button>
       </div>
     );
@@ -97,16 +86,10 @@ export default function ProfilePage({
 
   const confidenceLabel =
     confidence >= 0.8
-      ? "High"
+      ? "High Confidence"
       : confidence >= 0.5
-        ? "Medium"
-        : "Low";
-  const confidenceClass =
-    confidence >= 0.8
-      ? "confidence-high"
-      : confidence >= 0.5
-        ? "confidence-medium"
-        : "confidence-low";
+        ? "Medium Confidence"
+        : "Low Confidence";
 
   const topLangs = profile.primary_languages
     ? Object.entries(profile.primary_languages)
@@ -115,37 +98,51 @@ export default function ProfilePage({
     : [];
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg-primary)" }}>
-      {/* Top Header Navigation */}
+    <div style={{ minHeight: "100vh", background: "var(--bg-primary)", color: "var(--text-primary)" }}>
+      {/* Top Utility Bar */}
+      <div
+        style={{
+          borderBottom: "1px solid var(--border-dark)",
+          padding: "6px 24px",
+          fontSize: "11px",
+          fontFamily: "'Courier Prime', monospace",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          background: "var(--bg-secondary)",
+          letterSpacing: "0.05em",
+        }}
+      >
+        <span>OFFICIAL DOSSIER FILE NO. #{profile.id.slice(0, 8).toUpperCase()}</span>
+        <span style={{ fontWeight: 700 }}>THE TALENT TIMES • INTELLIGENCE REPORT</span>
+        <span>CONFIDENTIAL</span>
+      </div>
+
+      {/* Header / Masthead Nav */}
       <header
         style={{
-          borderBottom: "1px solid var(--border-subtle)",
           padding: "16px 48px",
+          maxWidth: "1280px",
+          margin: "0 auto",
           display: "flex",
           alignItems: "center",
-          gap: "16px",
-          background: "var(--bg-glass)",
-          backdropFilter: "blur(20px)",
-          position: "sticky",
-          top: 0,
-          zIndex: 50,
+          justifyContent: "space-between",
         }}
       >
         <button
           onClick={() => router.back()}
-          className="btn-ghost"
-          style={{ padding: "8px 16px", gap: "6px" }}
+          className="btn-vintage-outline"
+          style={{ fontSize: "12px", padding: "6px 14px" }}
         >
-          <ArrowLeft size={16} />
-          Back
+          ← RETURN
         </button>
-        <div style={{ flex: 1 }}>
-          <span style={{ fontSize: "16px", fontWeight: 700, color: "var(--text-primary)" }}>
+        <div style={{ textAlign: "center" }}>
+          <span className="font-headline" style={{ fontSize: "20px", fontWeight: 800, textTransform: "uppercase" }}>
             {profile.name || profile.github_username}
           </span>
           {profile.archetype && (
-            <span style={{ color: "var(--text-muted)", marginLeft: "10px", fontSize: "13px" }}>
-              • {profile.archetype}
+            <span style={{ fontFamily: "'Courier Prime', monospace", fontSize: "12px", color: "var(--stamp-red)", marginLeft: "10px", fontWeight: 700 }}>
+              [{profile.archetype}]
             </span>
           )}
         </div>
@@ -153,56 +150,58 @@ export default function ProfilePage({
           href={`https://github.com/${profile.github_username}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="btn-ghost"
-          style={{ padding: "8px 16px", fontSize: "13px", textDecoration: "none", gap: "6px" }}
+          className="btn-vintage"
+          style={{ fontSize: "11px", textDecoration: "none", padding: "6px 14px" }}
         >
-          View on GitHub <ExternalLink size={14} />
+          VIEW GITHUB ↗
         </a>
       </header>
 
-      <div
-        style={{
-          maxWidth: "1240px",
-          margin: "0 auto",
-          padding: "40px 48px",
-        }}
-      >
-        {/* Profile Header Banner */}
+      <div className="rule-double" style={{ maxWidth: "1280px", margin: "0 auto 32px" }} />
+
+      {/* Main Dossier Container */}
+      <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 48px 80px" }}>
+
+        {/* Dossier Banner / Hero Box */}
         <div
-          className="glass-card animate-slide-up"
+          className="vintage-box"
           style={{
-            padding: "36px 40px",
-            marginBottom: "28px",
+            marginBottom: "32px",
+            background: "var(--bg-card)",
+            padding: "36px",
             display: "flex",
-            gap: "40px",
+            gap: "36px",
             alignItems: "flex-start",
             flexWrap: "wrap",
-            background: "var(--bg-card)",
+            boxShadow: "var(--shadow-offset)",
           }}
         >
-          {/* Avatar & Info */}
-          <div style={{ display: "flex", gap: "24px", flex: "1 1 400px" }}>
+          {/* Avatar & Profile Identity */}
+          <div style={{ display: "flex", gap: "24px", flex: "1 1 400px", alignItems: "flex-start" }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={
                 profile.avatar_url ||
-                `https://ui-avatars.com/api/?name=${profile.github_username}&background=DA6747&color=fff&size=120`
+                `https://ui-avatars.com/api/?name=${profile.github_username}&background=8C241B&color=fff&size=120`
               }
               alt={profile.github_username}
               width={96}
               height={96}
               style={{
-                borderRadius: "var(--radius-lg)",
-                border: "3px solid var(--border-subtle)",
-                boxShadow: "var(--shadow-md)",
+                border: "3px solid var(--border-dark)",
+                boxShadow: "3px 3px 0px var(--border-dark)",
               }}
             />
             <div>
+              <div className="stamp-badge" style={{ marginBottom: "8px" }}>
+                OFFICIAL DOSSIER FILE
+              </div>
+
               <h1
-                className="font-serif-claude"
+                className="font-headline"
                 style={{
                   fontSize: "36px",
-                  fontWeight: 400,
+                  fontWeight: 900,
                   color: "var(--text-primary)",
                   marginBottom: "4px",
                   lineHeight: 1.1,
@@ -210,145 +209,132 @@ export default function ProfilePage({
               >
                 {profile.name || profile.github_username}
               </h1>
+
               <p
                 style={{
-                  fontSize: "15px",
-                  color: "var(--text-muted)",
-                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: "14px",
+                  color: "var(--stamp-red)",
+                  fontFamily: "'Courier Prime', monospace",
+                  fontWeight: 700,
                   marginBottom: "12px",
                 }}
               >
                 @{profile.github_username}
               </p>
+
               {profile.bio && (
                 <p
+                  className="font-body"
                   style={{
-                    fontSize: "14px",
+                    fontSize: "16px",
                     color: "var(--text-secondary)",
                     lineHeight: 1.6,
                     marginBottom: "14px",
-                    maxWidth: "520px",
+                    maxWidth: "540px",
                   }}
                 >
                   {profile.bio}
                 </p>
               )}
+
               <div
                 style={{
                   display: "flex",
                   gap: "18px",
-                  fontSize: "13px",
+                  fontSize: "12px",
+                  fontFamily: "'Courier Prime', monospace",
                   color: "var(--text-secondary)",
                   flexWrap: "wrap",
                 }}
               >
                 {profile.location && (
-                  <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-                    <MapPin size={14} color="var(--accent-primary)" /> {profile.location}
-                  </span>
+                  <span>📍 {profile.location}</span>
                 )}
                 {profile.company && (
-                  <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-                    <Building2 size={14} color="var(--accent-primary)" /> {profile.company}
-                  </span>
+                  <span>🏢 {profile.company}</span>
                 )}
-                <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-                  <Users size={14} color="var(--accent-primary)" /> {profile.followers} followers
-                </span>
-                <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-                  <FolderGit2 size={14} color="var(--accent-primary)" /> {profile.public_repos} repos
-                </span>
+                <span>👥 {profile.followers} FOLLOWERS</span>
+                <span>📦 {profile.public_repos} REPOSITORIES</span>
               </div>
             </div>
           </div>
 
-          {/* Talent Score Container */}
+          {/* Certificate Rating Box */}
           <div
             style={{
               textAlign: "center",
-              flex: "0 0 210px",
-              background: "var(--bg-accent-soft)",
+              flex: "0 0 220px",
+              background: "var(--bg-secondary)",
               padding: "24px 20px",
-              borderRadius: "var(--radius-lg)",
-              border: "1px solid rgba(218, 103, 71, 0.2)",
+              border: "2px solid var(--border-dark)",
+              boxShadow: "var(--shadow-offset)",
             }}
           >
+            <div style={{ fontSize: "11px", fontFamily: "'Courier Prime', monospace", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--text-muted)", marginBottom: "4px" }}>
+              COMPOSITE SCORE
+            </div>
+
             <div
-              className="font-serif-claude"
+              className="font-headline"
               style={{
                 fontSize: "64px",
-                fontWeight: 400,
+                fontWeight: 900,
                 lineHeight: 1,
                 marginBottom: "4px",
-                color: "var(--accent-primary)",
+                color: "var(--text-primary)",
               }}
             >
               {Math.round(score)}
             </div>
-            <div
-              style={{
-                fontSize: "11px",
-                color: "var(--text-muted)",
-                textTransform: "uppercase",
-                letterSpacing: "0.08em",
-                fontWeight: 700,
-                marginBottom: "12px",
-              }}
-            >
-              Talent Score
+
+            <div className="score-bar-vintage" style={{ marginBottom: "12px" }}>
+              <div className="score-bar-vintage-fill" style={{ width: `${score}%` }} />
             </div>
-            <div className="score-bar" style={{ marginBottom: "14px" }}>
-              <div className="score-bar-fill" style={{ width: `${score}%` }} />
-            </div>
+
             <span
-              className={confidenceClass}
+              className="stamp-badge"
               style={{
-                padding: "5px 14px",
-                borderRadius: "20px",
-                fontSize: "12px",
-                fontWeight: 600,
-                display: "inline-block",
+                borderColor: "var(--border-dark)",
+                color: "var(--text-primary)",
+                background: "var(--bg-card)",
               }}
             >
-              {confidenceLabel} Confidence ({(confidence * 100).toFixed(0)}%)
+              {confidenceLabel} ({(confidence * 100).toFixed(0)}%)
             </span>
           </div>
         </div>
 
-        {/* Quality Signals / Warnings */}
+        {/* Quality Signals / Warnings Banner */}
         {profile.gaming_warnings && profile.gaming_warnings.length > 0 && (
           <div
-            className="animate-fade-in stagger-1"
+            className="classified-box"
             style={{
-              padding: "18px 24px",
-              background: "#FFFBEB",
-              border: "1px solid #FDE68A",
-              borderRadius: "var(--radius-md)",
-              marginBottom: "28px",
+              marginBottom: "32px",
+              background: "rgba(140, 36, 27, 0.05)",
+              border: "2px dashed var(--stamp-red)",
             }}
           >
             <div
               style={{
-                fontSize: "14px",
+                fontSize: "13px",
                 fontWeight: 700,
-                color: "var(--accent-warning)",
+                fontFamily: "'Courier Prime', monospace",
+                color: "var(--stamp-red)",
                 marginBottom: "8px",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
+                textTransform: "uppercase",
               }}
             >
-              <ShieldAlert size={16} /> Quality & Fraud Signals
+              ⚠ QUALITY & FRAUD SIGNALS DETECTED
             </div>
             {profile.gaming_warnings.map((w, i) => (
               <div
                 key={i}
                 style={{
                   fontSize: "13px",
-                  color: "var(--text-secondary)",
-                  paddingLeft: "24px",
+                  fontFamily: "'Courier Prime', monospace",
+                  color: "var(--text-primary)",
+                  paddingLeft: "16px",
                   marginBottom: "4px",
-                  lineHeight: 1.5,
                 }}
               >
                 • {w}
@@ -357,79 +343,77 @@ export default function ProfilePage({
           </div>
         )}
 
-        {/* Main Grid */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 350px",
-            gap: "28px",
-          }}
-        >
-          {/* Left Column */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
-            {/* AI Summary */}
-            <div className="glass-card animate-fade-in stagger-1" style={{ padding: "32px" }}>
-              <SectionTitle icon={<Sparkles size={18} color="var(--accent-primary)" />} title="AI Profile Synthesis" />
-              <p
-                style={{
-                  fontSize: "16px",
-                  lineHeight: 1.8,
-                  color: "var(--text-primary)",
-                  fontWeight: 400,
-                }}
-              >
-                {profile.ai_summary || "No AI summary available for this profile."}
+        {/* Main 2-Column Newspaper Layout */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 360px", gap: "32px", alignItems: "start" }}>
+
+          {/* Left Column: Dossier Report & Repos */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+
+            {/* AI Summary Report */}
+            <div className="vintage-box" style={{ padding: "32px" }}>
+              <div style={{ borderBottom: "2px solid var(--border-dark)", paddingBottom: "6px", marginBottom: "16px" }}>
+                <span style={{ fontFamily: "'Courier Prime', monospace", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--stamp-red)" }}>
+                  REPORT SUMMARY • INTELLIGENCE EVALUATION
+                </span>
+              </div>
+
+              <h3 className="font-headline" style={{ fontSize: "24px", fontWeight: 800, marginBottom: "16px" }}>
+                ANALYSIS OF ENGINEERING CAPABILITIES
+              </h3>
+
+              <p className="drop-cap font-body" style={{ fontSize: "18px", lineHeight: 1.7, textAlign: "justify" }}>
+                {profile.ai_summary || "No AI summary report compiled for this engineer."}
               </p>
             </div>
 
-            {/* Strengths & Growth Areas */}
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "24px",
-              }}
-            >
-              <div className="glass-card animate-fade-in stagger-2" style={{ padding: "28px" }}>
-                <SectionTitle icon={<CheckCircle2 size={18} color="var(--accent-success)" />} title="Verified Strengths" />
+            {/* Strengths & Growth Areas Grid */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px" }}>
+              {/* Strengths */}
+              <div className="vintage-box" style={{ padding: "24px" }}>
+                <div style={{ borderBottom: "2px solid var(--border-dark)", paddingBottom: "6px", marginBottom: "14px" }}>
+                  <span style={{ fontFamily: "'Courier Prime', monospace", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "var(--stamp-green)" }}>
+                    ✓ VERIFIED STRENGTHS
+                  </span>
+                </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                   {(profile.strengths || []).map((s, i) => (
                     <div
                       key={i}
                       style={{
                         fontSize: "14px",
-                        lineHeight: 1.6,
-                        color: "var(--text-secondary)",
-                        paddingLeft: "24px",
+                        lineHeight: 1.5,
+                        fontFamily: "'Newsreader', serif",
+                        paddingLeft: "18px",
                         position: "relative",
                       }}
                     >
-                      <span style={{ position: "absolute", left: 0, top: "2px" }}>
-                        <Check size={16} color="var(--accent-success)" />
-                      </span>
+                      <span style={{ position: "absolute", left: 0, color: "var(--stamp-green)", fontWeight: 700 }}>✓</span>
                       {s}
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="glass-card animate-fade-in stagger-3" style={{ padding: "28px" }}>
-                <SectionTitle icon={<TrendingUp size={18} color="var(--accent-amber)" />} title="Growth Areas" />
+              {/* Growth Areas */}
+              <div className="vintage-box" style={{ padding: "24px" }}>
+                <div style={{ borderBottom: "2px solid var(--border-dark)", paddingBottom: "6px", marginBottom: "14px" }}>
+                  <span style={{ fontFamily: "'Courier Prime', monospace", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "var(--stamp-gold)" }}>
+                    △ AREAS FOR GROWTH
+                  </span>
+                </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                   {(profile.growth_areas || []).map((g, i) => (
                     <div
                       key={i}
                       style={{
                         fontSize: "14px",
-                        lineHeight: 1.6,
-                        color: "var(--text-secondary)",
-                        paddingLeft: "24px",
+                        lineHeight: 1.5,
+                        fontFamily: "'Newsreader', serif",
+                        paddingLeft: "18px",
                         position: "relative",
                       }}
                     >
-                      <span style={{ position: "absolute", left: 0, top: "2px", color: "var(--accent-amber)" }}>
-                        △
-                      </span>
+                      <span style={{ position: "absolute", left: 0, color: "var(--stamp-gold)", fontWeight: 700 }}>△</span>
                       {g}
                     </div>
                   ))}
@@ -438,12 +422,14 @@ export default function ProfilePage({
             </div>
 
             {/* Top Repositories */}
-            <div className="glass-card animate-fade-in stagger-4" style={{ padding: "32px" }}>
-              <SectionTitle
-                icon={<FolderGit2 size={18} color="var(--accent-primary)" />}
-                title={`Top Repositories (${profile.top_repos.length})`}
-              />
-              <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+            <div className="vintage-box" style={{ padding: "32px" }}>
+              <div style={{ borderBottom: "2px solid var(--border-dark)", paddingBottom: "6px", marginBottom: "20px" }}>
+                <span style={{ fontFamily: "'Courier Prime', monospace", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                  REPOSITORY MANIFEST ({profile.top_repos.length} ANALYZED)
+                </span>
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                 {profile.top_repos.slice(0, 8).map((repo, i) => (
                   <a
                     key={i}
@@ -454,21 +440,12 @@ export default function ProfilePage({
                       display: "flex",
                       alignItems: "center",
                       gap: "16px",
-                      padding: "16px 20px",
+                      padding: "16px",
                       background: "var(--bg-primary)",
-                      borderRadius: "var(--radius-md)",
-                      border: "1px solid var(--border-subtle)",
+                      border: "2px solid var(--border-dark)",
                       textDecoration: "none",
                       color: "inherit",
-                      transition: "all 0.2s",
-                    }}
-                    onMouseOver={(e) => {
-                      e.currentTarget.style.borderColor = "var(--accent-primary)";
-                      e.currentTarget.style.transform = "translateX(4px)";
-                    }}
-                    onMouseOut={(e) => {
-                      e.currentTarget.style.borderColor = "var(--border-subtle)";
-                      e.currentTarget.style.transform = "translateX(0)";
+                      boxShadow: "2px 2px 0px var(--border-dark)",
                     }}
                   >
                     <div style={{ flex: 1 }}>
@@ -476,34 +453,20 @@ export default function ProfilePage({
                         style={{
                           fontSize: "15px",
                           fontWeight: 700,
-                          fontFamily: "'JetBrains Mono', monospace",
+                          fontFamily: "'Courier Prime', monospace",
+                          color: "var(--stamp-red)",
                           marginBottom: "4px",
-                          color: "var(--accent-primary)",
                         }}
                       >
                         {repo.repo_full_name}
                         {repo.is_fork && (
-                          <span
-                            style={{
-                              fontSize: "11px",
-                              color: "var(--text-muted)",
-                              marginLeft: "8px",
-                              fontWeight: 400,
-                              fontFamily: "'Plus Jakarta Sans', sans-serif",
-                            }}
-                          >
+                          <span style={{ fontSize: "11px", color: "var(--text-muted)", marginLeft: "8px", fontWeight: 400 }}>
                             (fork)
                           </span>
                         )}
                       </div>
                       {repo.description && (
-                        <div
-                          style={{
-                            fontSize: "13px",
-                            color: "var(--text-secondary)",
-                            lineHeight: 1.5,
-                          }}
-                        >
+                        <div style={{ fontSize: "13px", color: "var(--text-secondary)", lineHeight: 1.5 }}>
                           {repo.description.length > 110
                             ? repo.description.slice(0, 110) + "..."
                             : repo.description}
@@ -515,19 +478,16 @@ export default function ProfilePage({
                       style={{
                         display: "flex",
                         alignItems: "center",
-                        gap: "14px",
-                        fontSize: "13px",
-                        color: "var(--text-secondary)",
+                        gap: "12px",
+                        fontSize: "12px",
+                        fontFamily: "'Courier Prime', monospace",
+                        fontWeight: 700,
                         whiteSpace: "nowrap",
                       }}
                     >
-                      {repo.language && <span className="tag">{repo.language}</span>}
-                      <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                        <Star size={14} color="var(--accent-amber)" fill="var(--accent-amber)" /> {repo.stars}
-                      </span>
-                      <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                        <GitFork size={14} /> {repo.forks}
-                      </span>
+                      {repo.language && <span className="tag-vintage">{repo.language}</span>}
+                      <span>★ {repo.stars}</span>
+                      <span>🍴 {repo.forks}</span>
                     </div>
                   </a>
                 ))}
@@ -535,50 +495,65 @@ export default function ProfilePage({
             </div>
           </div>
 
-          {/* Right Column */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
-            {/* Score Breakdown */}
+          {/* Right Column: Score Breakdown & Official Hire Recommendation */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+
+            {/* Score Breakdown Box */}
             {breakdown && (
-              <div className="glass-card animate-fade-in stagger-2" style={{ padding: "28px" }}>
-                <SectionTitle icon={<BarChart3 size={18} color="var(--accent-primary)" />} title="Score Breakdown" />
+              <div className="vintage-box" style={{ padding: "28px" }}>
+                <div style={{ borderBottom: "2px solid var(--border-dark)", paddingBottom: "6px", marginBottom: "18px" }}>
+                  <span style={{ fontFamily: "'Courier Prime', monospace", fontSize: "11px", fontWeight: 700, textTransform: "uppercase" }}>
+                    SCORE BREAKDOWN MATRIX
+                  </span>
+                </div>
+
                 <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-                  <ScoreRow label="Technical Depth" value={breakdown.technical_depth} weight="30%" />
-                  <ScoreRow label="Output Quality" value={breakdown.output_quality} weight="25%" />
-                  <ScoreRow label="Consistency" value={breakdown.consistency} weight="20%" />
-                  <ScoreRow label="Collaboration" value={breakdown.collaboration} weight="15%" />
-                  <ScoreRow label="Specialization" value={breakdown.specialization} weight="10%" />
+                  <ScoreRow label="TECHNICAL DEPTH" value={breakdown.technical_depth} weight="30%" />
+                  <ScoreRow label="OUTPUT QUALITY" value={breakdown.output_quality} weight="25%" />
+                  <ScoreRow label="CONSISTENCY" value={breakdown.consistency} weight="20%" />
+                  <ScoreRow label="COLLABORATION" value={breakdown.collaboration} weight="15%" />
+                  <ScoreRow label="SPECIALIZATION" value={breakdown.specialization} weight="10%" />
                 </div>
               </div>
             )}
 
-            {/* Would Hire Recommendation */}
-            <div className="glass-card animate-fade-in stagger-3" style={{ padding: "28px", textAlign: "center" }}>
-              <SectionTitle icon={<Award size={18} color="var(--accent-primary)" />} title="Hire Match Recommendation" />
+            {/* Official Hire Recommendation Coupon */}
+            <div className="coupon-box" style={{ textAlign: "center", padding: "28px" }}>
+              <div style={{ fontSize: "11px", fontFamily: "'Courier Prime', monospace", fontWeight: 700, textTransform: "uppercase", color: "var(--stamp-red)", marginBottom: "8px" }}>
+                ★ OFFICIAL RECOMMENDATION ★
+              </div>
               <div className="star-rating" style={{ justifyContent: "center", marginBottom: "14px" }}>
                 {[1, 2, 3, 4, 5].map((s) => (
-                  <Star
+                  <span
                     key={s}
-                    size={28}
-                    fill={s <= Math.round(profile.would_hire_score || 0) ? "var(--accent-amber)" : "none"}
-                    color={s <= Math.round(profile.would_hire_score || 0) ? "var(--accent-amber)" : "var(--border-default)"}
-                  />
+                    style={{
+                      fontSize: "26px",
+                      color: s <= Math.round(profile.would_hire_score || 0) ? "var(--stamp-gold)" : "var(--border-muted)",
+                    }}
+                  >
+                    ★
+                  </span>
                 ))}
               </div>
-              <div style={{ fontSize: "16px", fontWeight: 700, color: "var(--text-primary)" }}>
+              <h4 className="font-headline" style={{ fontSize: "20px", fontWeight: 800, color: "var(--text-primary)" }}>
                 {(profile.would_hire_score || 0) >= 4
-                  ? "Strong Hire Recommendation"
+                  ? "STRONG HIRE RECOMMENDATION"
                   : (profile.would_hire_score || 0) >= 3
-                    ? "Hire Recommendation"
+                    ? "HIRE RECOMMENDATION"
                     : (profile.would_hire_score || 0) >= 2
-                      ? "Lean Hire"
-                      : "Needs Further Assessment"}
-              </div>
+                      ? "LEAN HIRE RECOMMENDATION"
+                      : "FURTHER DATA REQUIRED"}
+              </h4>
             </div>
 
-            {/* Language Breakdown */}
+            {/* Languages Breakdown */}
             {topLangs.length > 0 && (
-              <div className="glass-card animate-fade-in stagger-3" style={{ padding: "28px" }}>
-                <SectionTitle icon={<Code2 size={18} color="var(--accent-primary)" />} title="Language Breakdown" />
+              <div className="vintage-box" style={{ padding: "28px" }}>
+                <div style={{ borderBottom: "2px solid var(--border-dark)", paddingBottom: "6px", marginBottom: "16px" }}>
+                  <span style={{ fontFamily: "'Courier Prime', monospace", fontSize: "11px", fontWeight: 700, textTransform: "uppercase" }}>
+                    LANGUAGE RATIO DISTRIBUTION
+                  </span>
+                </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
                   {topLangs.map(([lang, pct]) => (
                     <div key={lang}>
@@ -586,15 +561,17 @@ export default function ProfilePage({
                         style={{
                           display: "flex",
                           justifyContent: "space-between",
-                          marginBottom: "6px",
-                          fontSize: "13px",
+                          marginBottom: "4px",
+                          fontFamily: "'Courier Prime', monospace",
+                          fontSize: "12px",
+                          fontWeight: 700,
                         }}
                       >
-                        <span style={{ fontWeight: 600, color: "var(--text-primary)" }}>{lang}</span>
-                        <span style={{ color: "var(--text-muted)" }}>{pct.toFixed(1)}%</span>
+                        <span>{lang}</span>
+                        <span>{pct.toFixed(1)}%</span>
                       </div>
-                      <div className="score-bar">
-                        <div className="score-bar-fill" style={{ width: `${Math.min(pct, 100)}%` }} />
+                      <div className="score-bar-vintage">
+                        <div className="score-bar-vintage-fill" style={{ width: `${Math.min(pct, 100)}%` }} />
                       </div>
                     </div>
                   ))}
@@ -602,12 +579,16 @@ export default function ProfilePage({
               </div>
             )}
 
-            {/* Expertise & Frameworks */}
-            <div className="glass-card animate-fade-in stagger-4" style={{ padding: "28px" }}>
-              <SectionTitle icon={<Zap size={18} color="var(--accent-primary)" />} title="Expertise & Tools" />
-              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "20px" }}>
+            {/* Specialization Tags */}
+            <div className="vintage-box" style={{ padding: "28px" }}>
+              <div style={{ borderBottom: "2px solid var(--border-dark)", paddingBottom: "6px", marginBottom: "16px" }}>
+                <span style={{ fontFamily: "'Courier Prime', monospace", fontSize: "11px", fontWeight: 700, textTransform: "uppercase" }}>
+                  DOMAINS & SPECIALIZATIONS
+                </span>
+              </div>
+              <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "16px" }}>
                 {(profile.expertise_areas || []).map((area, i) => (
-                  <span key={i} className="tag">
+                  <span key={i} className="tag-vintage">
                     {area}
                   </span>
                 ))}
@@ -617,27 +598,19 @@ export default function ProfilePage({
                 profile.frameworks.length > 0 &&
                 profile.frameworks[0] !== "Not detected" && (
                   <>
-                    <div
-                      style={{
-                        fontSize: "13px",
-                        fontWeight: 700,
-                        marginBottom: "10px",
-                        color: "var(--text-secondary)",
-                      }}
-                    >
-                      Frameworks & Stack
+                    <div style={{ fontSize: "11px", fontFamily: "'Courier Prime', monospace", fontWeight: 700, marginBottom: "8px" }}>
+                      FRAMEWORKS DETECTED:
                     </div>
                     <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
                       {profile.frameworks.map((fw, i) => (
                         <span
                           key={i}
                           style={{
-                            padding: "4px 10px",
-                            borderRadius: "12px",
-                            fontSize: "12px",
-                            background: "var(--bg-tertiary)",
-                            color: "var(--text-primary)",
-                            fontWeight: 500,
+                            padding: "2px 8px",
+                            border: "1px solid var(--border-dark)",
+                            fontSize: "11px",
+                            fontFamily: "'Courier Prime', monospace",
+                            background: "var(--bg-secondary)",
                           }}
                         >
                           {fw}
@@ -648,19 +621,19 @@ export default function ProfilePage({
                 )}
             </div>
 
-            {/* Metadata Footer Card */}
+            {/* Stamp Meta File Box */}
             <div
-              className="glass-card animate-fade-in stagger-5"
+              className="vintage-box"
               style={{
-                padding: "20px 24px",
-                fontSize: "12px",
+                padding: "16px 20px",
+                fontSize: "11px",
+                fontFamily: "'Courier Prime', monospace",
                 color: "var(--text-muted)",
               }}
             >
               {profile.last_analyzed_at && (
-                <div style={{ marginBottom: "4px", display: "flex", alignItems: "center", gap: "6px" }}>
-                  <Clock size={13} />
-                  Analyzed:{" "}
+                <div style={{ marginBottom: "4px" }}>
+                  DATE ANALYZED:{" "}
                   {new Date(profile.last_analyzed_at).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "short",
@@ -670,32 +643,15 @@ export default function ProfilePage({
                   })}
                 </div>
               )}
-              <div>ID: {profile.id}</div>
+              <div>FILE ID: {profile.id}</div>
             </div>
+
           </div>
         </div>
+
+        <div className="rule-double" style={{ marginTop: "60px" }} />
       </div>
     </div>
-  );
-}
-
-function SectionTitle({ icon, title }: { icon: React.ReactNode; title: string }) {
-  return (
-    <h3
-      style={{
-        fontSize: "14px",
-        fontWeight: 700,
-        textTransform: "uppercase",
-        letterSpacing: "0.06em",
-        color: "var(--text-primary)",
-        marginBottom: "20px",
-        display: "flex",
-        alignItems: "center",
-        gap: "8px",
-      }}
-    >
-      {icon} {title}
-    </h3>
   );
 }
 
@@ -716,19 +672,21 @@ function ScoreRow({
           display: "flex",
           justifyContent: "space-between",
           marginBottom: "6px",
-          fontSize: "13px",
+          fontFamily: "'Courier Prime', monospace",
+          fontSize: "12px",
+          fontWeight: 700,
         }}
       >
-        <span style={{ fontWeight: 600, color: "var(--text-primary)" }}>{label}</span>
+        <span>{label}</span>
         <span>
-          <span style={{ fontWeight: 700, color: "var(--accent-primary)" }}>{value.toFixed(1)}</span>
-          <span style={{ color: "var(--text-muted)", marginLeft: "6px", fontSize: "11px" }}>
+          <span style={{ color: "var(--stamp-red)", fontWeight: 700 }}>{value.toFixed(1)}</span>
+          <span style={{ color: "var(--text-muted)", marginLeft: "4px", fontSize: "10px" }}>
             ({weight})
           </span>
         </span>
       </div>
-      <div className="score-bar">
-        <div className="score-bar-fill" style={{ width: `${pct}%` }} />
+      <div className="score-bar-vintage">
+        <div className="score-bar-vintage-fill" style={{ width: `${pct}%` }} />
       </div>
     </div>
   );
@@ -743,20 +701,11 @@ function LoadingSkeleton() {
         padding: "40px 48px",
       }}
     >
-      <div className="skeleton" style={{ height: "44px", width: "180px", marginBottom: "32px" }} />
-      <div className="skeleton" style={{ height: "200px", marginBottom: "28px" }} />
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 350px", gap: "28px" }}>
-        <div>
-          <div className="skeleton" style={{ height: "160px", marginBottom: "28px" }} />
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px" }}>
-            <div className="skeleton" style={{ height: "220px" }} />
-            <div className="skeleton" style={{ height: "220px" }} />
-          </div>
-        </div>
-        <div>
-          <div className="skeleton" style={{ height: "260px", marginBottom: "28px" }} />
-          <div className="skeleton" style={{ height: "180px", marginBottom: "28px" }} />
-        </div>
+      <div className="skeleton" style={{ height: "40px", width: "160px", marginBottom: "32px", border: "2px solid var(--border-dark)" }} />
+      <div className="skeleton" style={{ height: "200px", marginBottom: "28px", border: "2px solid var(--border-dark)" }} />
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 360px", gap: "32px" }}>
+        <div className="skeleton" style={{ height: "300px", border: "2px solid var(--border-dark)" }} />
+        <div className="skeleton" style={{ height: "300px", border: "2px solid var(--border-dark)" }} />
       </div>
     </div>
   );

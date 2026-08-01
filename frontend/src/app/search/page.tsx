@@ -20,6 +20,8 @@ import {
   CheckCircle2,
   Building2,
   MapPin,
+  FileText,
+  Bookmark,
 } from "lucide-react";
 
 export default function SearchPage() {
@@ -64,7 +66,6 @@ export default function SearchPage() {
     const term = searchInput.trim();
     if (!term) return;
 
-    // Try exact match first
     try {
       const existing = await getEngineerByUsername(term);
       if (existing && existing.github_username) {
@@ -72,7 +73,7 @@ export default function SearchPage() {
         return;
       }
     } catch {
-      // Not an exact username match, proceed with normal search
+      // Continue to search query
     }
 
     setQuery(term);
@@ -110,146 +111,149 @@ export default function SearchPage() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg-primary)" }}>
-      {/* Header */}
-      <header
+    <div style={{ minHeight: "100vh", background: "var(--bg-primary)", color: "var(--text-primary)" }}>
+      {/* Top Utility Bar */}
+      <div
         style={{
-          borderBottom: "1px solid var(--border-subtle)",
-          padding: "18px 48px",
+          borderBottom: "1px solid var(--border-dark)",
+          padding: "6px 24px",
+          fontSize: "11px",
+          fontFamily: "'Courier Prime', monospace",
           display: "flex",
-          alignItems: "center",
           justifyContent: "space-between",
-          background: "var(--bg-glass)",
-          backdropFilter: "blur(20px)",
-          position: "sticky",
-          top: 0,
-          zIndex: 50,
+          alignItems: "center",
+          background: "var(--bg-secondary)",
+          letterSpacing: "0.05em",
         }}
       >
-        <button
-          onClick={() => router.push("/")}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "12px",
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            color: "var(--text-primary)",
-          }}
-        >
-          <div
+        <span>CLASSIFIED DIRECTORY GAZETTE</span>
+        <span style={{ fontWeight: 700 }}>THE TALENT TIMES</span>
+        <span>PAGE B-12</span>
+      </div>
+
+      {/* Header / Masthead */}
+      <header
+        style={{
+          padding: "20px 48px",
+          maxWidth: "1280px",
+          margin: "0 auto",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <button
+            onClick={() => router.push("/")}
             style={{
-              width: 34,
-              height: 34,
-              borderRadius: "10px",
-              background: "var(--gradient-primary)",
               display: "flex",
               alignItems: "center",
-              justifyContent: "center",
-              color: "white",
+              gap: "12px",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              color: "var(--text-primary)",
             }}
           >
-            <Sparkles size={18} />
-          </div>
-          <span style={{ fontSize: "20px", fontWeight: 800 }}>
-            Talent<span style={{ color: "var(--accent-primary)" }}>Radar</span>
-          </span>
-        </button>
-
-        {/* Quick Stats */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            fontSize: "14px",
-            color: "var(--text-secondary)",
-            background: "var(--bg-card)",
-            padding: "6px 16px",
-            borderRadius: "20px",
-            border: "1px solid var(--border-subtle)",
-          }}
-        >
-          <Users size={15} color="var(--accent-primary)" />
-          <span>
-            <strong style={{ color: "var(--text-primary)", fontWeight: 700 }}>{total}</strong> engineers indexed
-          </span>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <div style={{ padding: "40px 48px", maxWidth: "1400px", margin: "0 auto" }}>
-        {/* Search & Controls */}
-        <div
-          style={{
-            display: "flex",
-            gap: "16px",
-            marginBottom: "32px",
-            alignItems: "center",
-            flexWrap: "wrap",
-          }}
-        >
-          <form
-            onSubmit={handleSearch}
-            style={{ flex: 1, minWidth: "320px", display: "flex", gap: "10px" }}
-          >
-            <div style={{ position: "relative", flex: 1 }}>
-              <span
-                style={{
-                  position: "absolute",
-                  left: "16px",
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  color: "var(--text-muted)",
-                }}
-              >
-                <Search size={18} />
-              </span>
-              <input
-                type="text"
-                className="input"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                placeholder="Search by name, username, or archetype..."
-                style={{ height: "50px", paddingLeft: "46px" }}
-              />
+            <div
+              style={{
+                width: 38,
+                height: 38,
+                border: "2px solid var(--border-dark)",
+                background: "var(--stamp-red)",
+                color: "white",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontFamily: "'Playfair Display', serif",
+                fontSize: "20px",
+                fontWeight: 900,
+                boxShadow: "2px 2px 0px var(--border-dark)",
+              }}
+            >
+              T
             </div>
-            <button type="submit" className="btn-primary" style={{ height: "50px" }}>
-              Search
-            </button>
-          </form>
-
-          <button
-            onClick={handleAnalyze}
-            disabled={analyzing || !searchInput.trim()}
-            className="btn-ghost"
-            style={{ height: "50px", gap: "8px" }}
-          >
-            {analyzing ? (
-              <>
-                <Loader2 size={16} className="animate-spin" />
-                Analyzing...
-              </>
-            ) : (
-              <>
-                <PlusCircle size={16} color="var(--accent-primary)" />
-                Analyze New User
-              </>
-            )}
+            <div>
+              <span className="font-headline" style={{ fontSize: "24px", fontWeight: 900, letterSpacing: "0.02em" }}>
+                THE TALENT TIMES
+              </span>
+              <div style={{ fontSize: "11px", fontFamily: "'Courier Prime', monospace", color: "var(--text-secondary)" }}>
+                ENGINEER DIRECTORY & DOSSIER REGISTRY
+              </div>
+            </div>
           </button>
 
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <SlidersHorizontal size={16} color="var(--text-muted)" />
+          {/* Quick Stats Stamp */}
+          <div className="stamp-badge">
+            <Users size={14} />
+            {total} ENGINEERS INDEXED
+          </div>
+        </div>
+
+        <div className="rule-double" />
+      </header>
+
+      {/* Main Content Container */}
+      <div style={{ padding: "0 48px 80px", maxWidth: "1280px", margin: "0 auto" }}>
+        
+        {/* Search & Filters Toolbar */}
+        <div
+          className="vintage-box"
+          style={{
+            marginBottom: "32px",
+            background: "var(--bg-card)",
+          }}
+        >
+          <div style={{ fontSize: "11px", fontFamily: "'Courier Prime', monospace", textTransform: "uppercase", fontWeight: 700, color: "var(--stamp-red)", marginBottom: "10px" }}>
+            SEARCH DIRECTORY REGISTRY & DOSSIERS
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              gap: "14px",
+              alignItems: "center",
+              flexWrap: "wrap",
+            }}
+          >
+            <form onSubmit={handleSearch} style={{ flex: 1, minWidth: "300px", display: "flex", gap: "10px" }}>
+              <input
+                type="text"
+                className="input-vintage"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                placeholder="Search by name, username, or archetype (e.g. torvalds)..."
+                style={{ height: "46px" }}
+              />
+              <button type="submit" className="btn-vintage" style={{ height: "46px" }}>
+                SEARCH
+              </button>
+            </form>
+
+            <button
+              onClick={handleAnalyze}
+              disabled={analyzing || !searchInput.trim()}
+              className="btn-vintage-outline"
+              style={{ height: "46px", whiteSpace: "nowrap" }}
+            >
+              {analyzing ? (
+                <>
+                  <Loader2 size={15} className="animate-spin" />
+                  ANALYZING...
+                </>
+              ) : (
+                <>
+                  + ANALYZE NEW USER
+                </>
+              )}
+            </button>
+
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="input"
-              style={{ width: "210px", height: "50px", cursor: "pointer" }}
+              className="input-vintage"
+              style={{ width: "210px", height: "46px", cursor: "pointer" }}
             >
-              <option value="talent_score">Sort: Talent Score</option>
-              <option value="profile_confidence">Sort: Confidence</option>
-              <option value="updated_at">Sort: Recently Updated</option>
+              <option value="talent_score">SORT: TALENT SCORE</option>
+              <option value="profile_confidence">SORT: CONFIDENCE</option>
+              <option value="updated_at">SORT: RECENTLY UPDATED</option>
             </select>
           </div>
         </div>
@@ -257,16 +261,16 @@ export default function SearchPage() {
         {error && (
           <div
             style={{
-              color: "var(--accent-danger)",
-              padding: "14px 18px",
-              background: "#FEE2E2",
-              borderRadius: "var(--radius-sm)",
-              border: "1px solid #FCA5A5",
+              color: "var(--stamp-red)",
+              padding: "12px 18px",
+              background: "rgba(140, 36, 27, 0.08)",
+              border: "2px solid var(--stamp-red)",
+              fontFamily: "'Courier Prime', monospace",
               marginBottom: "24px",
-              fontSize: "14px",
+              fontSize: "13px",
             }}
           >
-            {error}
+            ⚠ ERROR: {error}
           </div>
         )}
 
@@ -283,44 +287,26 @@ export default function SearchPage() {
               <div
                 key={i}
                 className="skeleton"
-                style={{ height: "260px", borderRadius: "var(--radius-lg)" }}
+                style={{ height: "260px", border: "2px solid var(--border-dark)" }}
               />
             ))}
           </div>
         ) : engineers.length === 0 ? (
           <div
+            className="vintage-box"
             style={{
               textAlign: "center",
-              padding: "90px 20px",
-              color: "var(--text-secondary)",
-              background: "var(--bg-card)",
-              borderRadius: "var(--radius-xl)",
-              border: "1px solid var(--border-subtle)",
+              padding: "80px 20px",
             }}
           >
-            <div
-              style={{
-                width: 64,
-                height: 64,
-                borderRadius: "50%",
-                background: "var(--bg-accent-soft)",
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "var(--accent-primary)",
-                marginBottom: "20px",
-              }}
-            >
-              <Search size={30} />
+            <div className="rubber-stamp-circle" style={{ margin: "0 auto 16px", width: "90px", height: "90px" }}>
+              NOT FOUND
             </div>
-            <h3
-              className="font-serif-claude"
-              style={{ fontSize: "28px", marginBottom: "8px", color: "var(--text-primary)" }}
-            >
-              No engineers found
+            <h3 className="font-headline" style={{ fontSize: "28px", fontWeight: 800, marginBottom: "8px" }}>
+              NO DOSSIERS MATCHING INQUIRY
             </h3>
-            <p style={{ fontSize: "15px", maxWidth: "460px", margin: "0 auto 24px" }}>
-              Enter a GitHub username above and click &quot;Analyze New User&quot; to fetch and score their profile live.
+            <p className="font-body" style={{ fontSize: "16px", color: "var(--text-secondary)", maxWidth: "480px", margin: "0 auto 24px" }}>
+              No engineer dossiers were found. Enter a GitHub username in the search field above and click &quot;+ ANALYZE NEW USER&quot; to compile their data live.
             </p>
           </div>
         ) : (
@@ -334,7 +320,7 @@ export default function SearchPage() {
             >
               {engineers.map((eng, i) => (
                 <Link href={`/profile/${eng.github_username}`} key={eng.id} style={{ textDecoration: "none", color: "inherit" }}>
-                  <EngineerCardComponent engineer={eng} index={i} />
+                  <EngineerNewspaperCard engineer={eng} index={i} />
                 </Link>
               ))}
             </div>
@@ -346,44 +332,40 @@ export default function SearchPage() {
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                  gap: "12px",
+                  gap: "16px",
                   marginTop: "48px",
+                  fontFamily: "'Courier Prime', monospace",
                 }}
               >
                 <button
-                  className="btn-ghost"
+                  className="btn-vintage-outline"
                   disabled={page === 1}
                   onClick={() => setPage(page - 1)}
                 >
-                  ← Previous
+                  ← PREVIOUS
                 </button>
-                <span
-                  style={{
-                    padding: "8px 16px",
-                    color: "var(--text-secondary)",
-                    fontSize: "14px",
-                    fontWeight: 600,
-                  }}
-                >
-                  Page {page} of {totalPages}
+                <span style={{ fontSize: "13px", fontWeight: 700 }}>
+                  PAGE {page} OF {totalPages}
                 </span>
                 <button
-                  className="btn-ghost"
+                  className="btn-vintage-outline"
                   disabled={page === totalPages}
                   onClick={() => setPage(page + 1)}
                 >
-                  Next →
+                  NEXT →
                 </button>
               </div>
             )}
           </>
         )}
+
+        <div className="rule-double" style={{ marginTop: "60px" }} />
       </div>
     </div>
   );
 }
 
-function EngineerCardComponent({
+function EngineerNewspaperCard({
   engineer,
   index,
 }: {
@@ -400,192 +382,130 @@ function EngineerCardComponent({
 
   const confidenceClass =
     confidence >= 0.7
-      ? "confidence-high"
+      ? "confidence-high-vintage"
       : confidence >= 0.4
-        ? "confidence-medium"
-        : "confidence-low";
+        ? "confidence-medium-vintage"
+        : "confidence-low-vintage";
 
   return (
-    <div
-      className="glass-card animate-fade-in"
-      style={{
-        padding: "28px",
-        cursor: "pointer",
-        animationDelay: `${index * 0.04}s`,
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        height: "100%",
-      }}
-    >
-      <div>
-        {/* Header */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "flex-start",
-            gap: "16px",
-            marginBottom: "20px",
-          }}
-        >
+    <div className="vintage-card" style={{ padding: "24px" }}>
+      {/* Header / Avatar & Score */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px" }}>
+        <div style={{ display: "flex", gap: "14px", alignItems: "center" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={engineer.avatar_url || `https://ui-avatars.com/api/?name=${engineer.github_username}&background=DA6747&color=fff`}
+            src={engineer.avatar_url || `https://ui-avatars.com/api/?name=${engineer.github_username}&background=8C241B&color=fff`}
             alt={engineer.github_username}
-            width={54}
-            height={54}
+            width={52}
+            height={52}
             style={{
-              borderRadius: "var(--radius-md)",
-              border: "2px solid var(--border-subtle)",
-              boxShadow: "var(--shadow-sm)",
+              border: "2px solid var(--border-dark)",
+              boxShadow: "2px 2px 0px var(--border-dark)",
             }}
           />
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <h3
-              style={{
-                fontSize: "17px",
-                fontWeight: 700,
-                marginBottom: "2px",
-                lineHeight: 1.3,
-                color: "var(--text-primary)",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }}
-            >
+          <div>
+            <h3 className="font-headline" style={{ fontSize: "19px", fontWeight: 800, lineHeight: 1.2 }}>
               {engineer.name || engineer.github_username}
             </h3>
-            <p
-              style={{
-                fontSize: "13px",
-                color: "var(--text-muted)",
-                fontFamily: "'JetBrains Mono', monospace",
-              }}
-            >
+            <div style={{ fontSize: "12px", fontFamily: "'Courier Prime', monospace", color: "var(--stamp-red)", fontWeight: 700 }}>
               @{engineer.github_username}
-            </p>
-          </div>
-
-          {/* Score Badge */}
-          <div
-            style={{
-              textAlign: "center",
-              background: "var(--bg-accent-soft)",
-              padding: "8px 12px",
-              borderRadius: "14px",
-              border: "1px solid rgba(218, 103, 71, 0.2)",
-            }}
-          >
-            <div
-              style={{
-                fontSize: "24px",
-                fontWeight: 800,
-                lineHeight: 1,
-                color: "var(--accent-primary)",
-                fontFamily: "'Instrument Serif', serif",
-              }}
-            >
-              {Math.round(score)}
-            </div>
-            <div
-              style={{
-                fontSize: "10px",
-                color: "var(--text-muted)",
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
-                marginTop: "2px",
-                fontWeight: 600,
-              }}
-            >
-              Score
             </div>
           </div>
         </div>
 
-        {/* Score Bar */}
-        <div className="score-bar" style={{ marginBottom: "16px" }}>
-          <div className="score-bar-fill" style={{ width: `${score}%` }} />
-        </div>
-
-        {/* Archetype & Confidence */}
+        {/* Vintage Score Box */}
         <div
           style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "16px",
-            flexWrap: "wrap",
-            gap: "8px",
+            border: "2px solid var(--border-dark)",
+            background: "var(--bg-secondary)",
+            padding: "4px 10px",
+            textAlign: "center",
+            boxShadow: "2px 2px 0px var(--border-dark)",
           }}
         >
-          {engineer.archetype ? (
-            <span className="tag">
-              <Award size={13} />
-              {engineer.archetype}
-            </span>
-          ) : (
-            <span />
-          )}
-          <span
-            className={confidenceClass}
-            style={{
-              padding: "4px 10px",
-              borderRadius: "20px",
-              fontSize: "11px",
-              fontWeight: 600,
-            }}
-          >
-            {(confidence * 100).toFixed(0)}% confident
-          </span>
-        </div>
-
-        {/* Languages */}
-        {topLangs.length > 0 && (
-          <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "16px" }}>
-            {topLangs.map(([lang, pct]) => (
-              <span
-                key={lang}
-                style={{
-                  padding: "3px 10px",
-                  borderRadius: "12px",
-                  fontSize: "11px",
-                  fontWeight: 500,
-                  background: "var(--bg-tertiary)",
-                  color: "var(--text-secondary)",
-                }}
-              >
-                {lang}{" "}
-                <span style={{ color: "var(--text-muted)" }}>
-                  {pct.toFixed(0)}%
-                </span>
-              </span>
-            ))}
+          <div style={{ fontSize: "24px", fontWeight: 800, fontFamily: "'Playfair Display', serif", lineHeight: 1 }}>
+            {Math.round(score)}
           </div>
-        )}
+          <div style={{ fontSize: "9px", fontFamily: "'Courier Prime', monospace", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase" }}>
+            SCORE
+          </div>
+        </div>
       </div>
 
-      {/* Footer / Star Recommendation */}
+      {/* Score Bar */}
+      <div className="score-bar-vintage" style={{ marginBottom: "14px" }}>
+        <div className="score-bar-vintage-fill" style={{ width: `${score}%` }} />
+      </div>
+
+      {/* Archetype & Confidence */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px", flexWrap: "wrap", gap: "6px" }}>
+        {engineer.archetype ? (
+          <span className="tag-vintage">
+            ★ {engineer.archetype}
+          </span>
+        ) : (
+          <span />
+        )}
+
+        <span
+          className={confidenceClass}
+          style={{
+            padding: "2px 8px",
+            fontSize: "10px",
+            fontFamily: "'Courier Prime', monospace",
+            fontWeight: 700,
+            textTransform: "uppercase",
+          }}
+        >
+          {(confidence * 100).toFixed(0)}% CONFIDENT
+        </span>
+      </div>
+
+      {/* Languages */}
+      {topLangs.length > 0 && (
+        <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "16px" }}>
+          {topLangs.map(([lang, pct]) => (
+            <span
+              key={lang}
+              style={{
+                fontSize: "11px",
+                fontFamily: "'Courier Prime', monospace",
+                border: "1px solid var(--border-dark)",
+                padding: "2px 6px",
+                background: "var(--bg-primary)",
+              }}
+            >
+              {lang} {pct.toFixed(0)}%
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* Recommendation Bottom Bar */}
       {engineer.would_hire_score !== null && (
         <div
           style={{
-            paddingTop: "14px",
-            borderTop: "1px solid var(--border-subtle)",
+            paddingTop: "12px",
+            borderTop: "1px dashed var(--border-dark)",
             display: "flex",
-            alignItems: "center",
             justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
-          <span style={{ fontSize: "12px", color: "var(--text-muted)", fontWeight: 500 }}>
-            Hire Match:
+          <span style={{ fontSize: "11px", fontFamily: "'Courier Prime', monospace", fontWeight: 700, color: "var(--text-secondary)" }}>
+            DOSSIER RATING:
           </span>
           <div className="star-rating">
             {[1, 2, 3, 4, 5].map((s) => (
-              <Star
+              <span
                 key={s}
-                size={14}
-                fill={s <= Math.round(engineer.would_hire_score || 0) ? "var(--accent-amber)" : "none"}
-                color={s <= Math.round(engineer.would_hire_score || 0) ? "var(--accent-amber)" : "var(--border-default)"}
-              />
+                style={{
+                  fontSize: "14px",
+                  color: s <= Math.round(engineer.would_hire_score || 0) ? "var(--stamp-gold)" : "var(--border-muted)",
+                }}
+              >
+                ★
+              </span>
             ))}
           </div>
         </div>
