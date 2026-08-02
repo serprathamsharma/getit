@@ -9,6 +9,7 @@ from app.core.config import settings
 from app.core.database import init_db
 from app.api.engineers import router as engineers_router
 from app.api.analysis import router as analysis_router
+from app.api.resumes import router as resumes_router
 
 # Configure logging
 logging.basicConfig(
@@ -49,6 +50,8 @@ app.add_middleware(
 # Include routers
 app.include_router(engineers_router)
 app.include_router(analysis_router)
+app.include_router(resumes_router)
+
 
 
 @app.get("/")

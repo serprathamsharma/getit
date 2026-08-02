@@ -138,3 +138,113 @@ export async function getArchetypes(): Promise<
   if (!res.ok) return [];
   return res.json();
 }
+
+// ── Resume Intelligence API ──────────────────────────────────────
+
+export interface WorkExperience {
+  company: string | null;
+  role: string | null;
+  duration: string | null;
+  description: string | null;
+  highlights: string[];
+}
+
+export interface EducationItem {
+  institution: string | null;
+  degree: string | null;
+  year: string | null;
+}
+
+export interface ProjectItem {
+  title: string | null;
+  description: string | null;
+  technologies: string[];
+}
+
+export interface JobFitEvaluation {
+  match_percentage: number;
+  qualification_score: number;
+  verdict: string;
+  fit_summary: string;
+  key_strengths: string[];
+  skill_gaps: string[];
+  missing_prerequisites: string[];
+  recommendation: string;
+}
+
+export interface ParsedResume {
+  id: string;
+  filename: string;
+  file_format: string;
+  raw_text?: string;
+  candidate_name: string | null;
+  github_username: string | null;
+  email: string | null;
+  phone: string | null;
+
+  experience_years: number | null;
+  skills: string[];
+  work_history: WorkExperience[];
+  education: EducationItem[];
+  projects: ProjectItem[];
+  certifications: string[];
+  job_fit_evaluation: JobFitEvaluation | null;
+  created_at: string | null;
+}
+
+export async function uploadResume(file: File): Promise<ParsedResume> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await fetch(`${API_BASE}/api/resumes/upload`, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Upload failed (${res.status})`);
+  }
+
+  return res.json();
+}
+
+export async function evaluateJobFit(
+  resumeId: string,
+  jobDescription: string
+): Promise<ParsedResume> {
+  const res = await fetch(`${API_BASE}/api/resumes/${resumeId}/evaluate-fit`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ job_description: jobDescription }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Evaluation failed (${res.status})`);
+  }
+
+  return res.json();
+}
+
+export async function getResume(resumeId: string): Promise<ParsedResume> {
+  const res = await fetch(`${API_BASE}/api/resumes/${resumeId}`);
+  if (!res.ok) throw new Error(`Resume not found (${res.status})`);
+  return res.json();
+}
+
+export async function listResumes(): Promise<ParsedResume[]> {
+  const res = await fetch(`${API_BASE}/api/resumes`);
+  if (!res.ok) return [];
+  return res.json();
+}
+
+export function getResumeFileUrl(resumeId: string): string {
+  return `${API_BASE}/api/resumes/${resumeId}/file`;
+}
+
+export function getResumeDownloadUrl(resumeId: string): string {
+  return `${API_BASE}/api/resumes/${resumeId}/download`;
+}
+
+

@@ -164,8 +164,14 @@ export default function Home() {
           >
             [ DIRECTORY ]
           </button>
+          <button
+            onClick={() => router.push("/resumes")}
+            style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "'Courier Prime', monospace", fontSize: "12px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#6366f1" }}
+          >
+            [ RESUME AI ]
+          </button>
           <a href="#classifieds" style={{ color: "var(--text-primary)", textDecoration: "none" }}>[ CLASSIFIEDS ]</a>
-          <a href="#opinion" style={{ color: "var(--text-primary)", textDecoration: "none" }}>[ ARCHIVE ]</a>
+
         </nav>
 
         {/* Double Rule Below Nav */}
@@ -176,9 +182,9 @@ export default function Home() {
       <main style={{ maxWidth: "1240px", margin: "0 auto", padding: "0 24px 80px" }}>
 
         {/* Hero Banner Section */}
-        <section style={{ textAlign: "center", padding: "20px 0 36px" }}>
+        <section style={{ textAlign: "center", padding: "4px 0 36px" }}>
           {/* Star Ornament */}
-          <div style={{ fontSize: "16px", color: "var(--text-muted)", marginBottom: "12px" }}>
+          <div style={{ fontSize: "14px", color: "var(--text-muted)", marginBottom: "6px" }}>
             — ★ —
           </div>
 

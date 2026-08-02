@@ -130,3 +130,64 @@ class AnalysisStatus(BaseModel):
     status: str  # "pending", "analyzing", "complete", "error"
     progress: int = 0  # 0-100
     message: str = ""
+
+
+# ── Resume Intelligence Schemas ───────────────────────────────────
+
+
+class WorkExperience(BaseModel):
+    company: str | None = None
+    role: str | None = None
+    duration: str | None = None
+    description: str | None = None
+    highlights: list[str] = []
+
+
+class EducationItem(BaseModel):
+    institution: str | None = None
+    degree: str | None = None
+    year: str | None = None
+
+
+class ProjectItem(BaseModel):
+    title: str | None = None
+    description: str | None = None
+    technologies: list[str] = []
+
+
+class JobFitRequest(BaseModel):
+    job_description: str = Field(..., min_length=10)
+
+
+class JobFitEvaluation(BaseModel):
+    match_percentage: float = 0.0
+    qualification_score: float = 0.0
+    verdict: str = "Neutral"  # Excellent, Strong, Moderate, Weak
+    fit_summary: str = ""
+    key_strengths: list[str] = []
+    skill_gaps: list[str] = []
+    missing_prerequisites: list[str] = []
+    recommendation: str = ""
+
+
+class ParsedResumeResponse(BaseModel):
+    id: str
+    filename: str
+    file_format: str
+    raw_text: str | None = None
+    candidate_name: str | None = None
+    github_username: str | None = None
+    email: str | None = None
+    phone: str | None = None
+
+    experience_years: float | None = 0.0
+    skills: list[str] = []
+    work_history: list[WorkExperience] = []
+    education: list[EducationItem] = []
+    projects: list[ProjectItem] = []
+    certifications: list[str] = []
+    job_fit_evaluation: JobFitEvaluation | None = None
+    created_at: datetime | None = None
+
+    model_config = {"from_attributes": True}
+

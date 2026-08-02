@@ -22,7 +22,20 @@ async def get_db():
             raise
 
 
+from sqlalchemy import text
+
+
 async def init_db():
-    """Create all tables on startup."""
+    """Create all tables on startup and auto-migrate missing columns."""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+        # Check and add github_username column if missing in resumes table
+        try:
+            res = await conn.execute(text("PRAGMA table_info(resumes)"))
+            columns = [row[1] for row in res.fetchall()]
+            if columns and "github_username" not in columns:
+                await conn.execute(text("ALTER TABLE resumes ADD COLUMN github_username VARCHAR(255)"))
+            if columns and "file_data" not in columns:
+                await conn.execute(text("ALTER TABLE resumes ADD COLUMN file_data BLOB"))
+        except Exception as e:
+            print("Auto-migration check notice:", e)
