@@ -187,7 +187,56 @@ class ParsedResumeResponse(BaseModel):
     projects: list[ProjectItem] = []
     certifications: list[str] = []
     job_fit_evaluation: JobFitEvaluation | None = None
-    created_at: datetime | None = None
-
     model_config = {"from_attributes": True}
+
+
+# ── Job Description Requirement Parsing Schemas ───────────────────
+
+
+class JobDescriptionParseRequest(BaseModel):
+    job_description: str = Field(..., min_length=10)
+
+
+class ParsedJobDescription(BaseModel):
+    role_title: str | None = None
+    required_skills: list[str] = []
+    nice_to_have_skills: list[str] = []
+    experience_years_required: float | None = 0.0
+    experience_level: str | None = None  # Junior, Mid-Level, Senior, Staff, Lead
+    domain_knowledge: list[str] = []
+    key_responsibilities: list[str] = []
+    education_requirements: str | None = None
+
+
+# ── Job Description Matching Engine Schemas ───────────────────────
+
+
+class JobMatchRequest(BaseModel):
+    resume_id: str
+    job_description: str = Field(..., min_length=10)
+
+
+class ExperienceComparison(BaseModel):
+    candidate_years: float = 0.0
+    required_years: float = 0.0
+    meets_requirement: bool = True
+
+
+class JobMatchResponse(BaseModel):
+    resume_id: str
+    candidate_name: str | None = None
+    match_percentage: float = 0.0
+    qualification_score: float = 0.0
+    verdict: str = "Neutral"
+    fit_summary: str = ""
+    parsed_jd: ParsedJobDescription
+    matched_skills: list[str] = []
+    unmatched_required_skills: list[str] = []
+    key_strengths: list[str] = []
+    skill_gaps: list[str] = []
+    missing_prerequisites: list[str] = []
+    experience_comparison: ExperienceComparison
+    recommendation: str = ""
+
+
 

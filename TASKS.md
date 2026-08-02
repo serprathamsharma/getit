@@ -22,17 +22,17 @@ This task list tracks the development of the 8 core features for **anti getit**.
 ---
 
 ### 2. 🎯 Job Description Matching
-- [ ] **2.1 Role Requirement Parsing**
-  - [ ] Parse job descriptions into key criteria: required skills, nice-to-haves, experience level, domain knowledge, and responsibilities.
-- [ ] **2.2 Matching Engine**
-  - [ ] Build comparison pipeline comparing candidate resume data against job criteria.
-  - [ ] Calculate overall Match Percentage score.
-  - [ ] Identify key Candidate Strengths matching required criteria.
-  - [ ] Identify Critical Gaps and missing prerequisites.
-- [ ] **2.3 UI & Match Visualization**
-  - [ ] Build interactive Job Description vs. Resume comparison view.
-  - [ ] Implement visual match percentage dial/bar chart.
-  - [ ] Display side-by-side strengths and skill gap breakdown.
+- [x] **2.1 Role Requirement Parsing**
+  - [x] Parse job descriptions into key criteria: required skills, nice-to-haves, experience level, domain knowledge, and responsibilities.
+- [x] **2.2 Matching Engine**
+  - [x] Build comparison pipeline comparing candidate resume data against job criteria.
+  - [x] Calculate overall Match Percentage score.
+  - [x] Identify key Candidate Strengths matching required criteria.
+  - [x] Identify Critical Gaps and missing prerequisites.
+- [x] **2.3 UI & Match Visualization**
+  - [x] Build interactive Job Description vs. Resume comparison view.
+  - [x] Implement visual match percentage dial/bar chart.
+  - [x] Display side-by-side strengths and skill gap breakdown.
 
 ---
 

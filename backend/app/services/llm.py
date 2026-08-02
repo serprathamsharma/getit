@@ -109,6 +109,22 @@ Return a JSON object with exactly these fields:
   "recommendation": "Specific hiring decision advice"
 }}"""
 
+JD_PARSE_PROMPT = """Analyze and parse the following job description into structured role criteria.
+
+JOB DESCRIPTION:
+{job_description}
+
+Return a JSON object with exactly these fields:
+{{
+  "role_title": "Extracted Role Title (e.g. Senior Full Stack Engineer, Civil Project Manager)",
+  "required_skills": ["List of mandatory technical or domain skills"],
+  "nice_to_have_skills": ["List of preferred / nice-to-have skills"],
+  "experience_years_required": 5.0,
+  "experience_level": "Junior | Mid-Level | Senior | Staff | Lead",
+  "domain_knowledge": ["List of key domain topics, e.g. Web Development, Cloud Systems, Civil Construction"],
+  "key_responsibilities": ["List of main job responsibilities"],
+  "education_requirements": "Education requirement or degree specified or null"
+}}"""
 
 
 class LLMService:
@@ -420,6 +436,131 @@ class LLMService:
 
         # Smart fallback evaluator
         return self._generate_mock_job_fit(parsed_resume, job_description)
+
+    async def parse_job_description(self, job_description: str) -> dict:
+        """Parse raw job description into structured role requirements and criteria."""
+        if self.is_available:
+            try:
+                import anthropic
+                client = anthropic.Anthropic(api_key=self.api_key)
+                message = client.messages.create(
+                    model=self.model,
+                    max_tokens=2000,
+                    system=SYSTEM_PROMPT,
+                    messages=[{
+                        "role": "user",
+                        "content": JD_PARSE_PROMPT.format(
+                            job_description=job_description[:8000]
+                        )
+                    }]
+                )
+                response_text = message.content[0].text.strip()
+                if response_text.startswith("```"):
+                    response_text = response_text.split("```")[1]
+                    if response_text.startswith("json"):
+                        response_text = response_text[4:]
+                return json.loads(response_text)
+            except Exception as e:
+                logger.error(f"Error parsing job description with Anthropic API: {e}")
+
+        # Smart fallback JD parser
+        return self._generate_mock_parsed_jd(job_description)
+
+    def _generate_mock_parsed_jd(self, job_description: str) -> dict:
+        """Extract structured role criteria from job description using regex and heuristics."""
+        import re
+
+        jd_lower = job_description.lower()
+        lines = [line.strip() for line in job_description.splitlines() if line.strip()]
+
+        # 1. Role Title
+        role_title = None
+        for line in lines[:5]:
+            if re.search(r"\b(engineer|developer|architect|manager|lead|specialist|analyst|consultant|designer)\b", line, re.I):
+                role_title = re.sub(r"^(job description|position|role|title)\s*:?\s*", "", line, flags=re.I).strip()
+                break
+        if not role_title and lines:
+            role_title = lines[0] if len(lines[0]) < 60 else "Software / Technical Engineer"
+
+        # 2. Experience Years Required
+        exp_match = re.search(r"(\d+)\+?\s*years?(?:\s+of)?\s+(?:experience|practical|work)", jd_lower)
+        experience_years_required = float(exp_match.group(1)) if exp_match else 3.0
+
+        # 3. Experience Level
+        if any(kw in jd_lower for kw in ["lead", "principal", "staff"]):
+            experience_level = "Lead"
+        elif any(kw in jd_lower for kw in ["senior", "sr.", "5+ years", "6+ years", "7+ years"]):
+            experience_level = "Senior"
+        elif any(kw in jd_lower for kw in ["junior", "jr.", "entry"]):
+            experience_level = "Junior"
+        else:
+            experience_level = "Mid-Level"
+
+        # 4. Known Technical & Domain Skills
+        known_skills = [
+            "Python", "TypeScript", "JavaScript", "React", "Next.js", "Vue.js", "Angular",
+            "Node.js", "Express", "FastAPI", "Django", "Flask", "Java", "Spring Boot",
+            "C++", "C#", ".NET", "Go", "Rust", "SQL", "PostgreSQL", "MySQL", "MongoDB",
+            "Redis", "Docker", "Kubernetes", "AWS", "GCP", "Azure", "Git", "GitHub",
+            "CI/CD", "Tailwind CSS", "HTML", "CSS", "REST API", "GraphQL", "PyTorch",
+            "TensorFlow", "System Architecture", "Linux", "Civil Engineering", "Construction",
+            "AutoCAD", "Revit", "Billing", "Site Management", "Reconciliation"
+        ]
+
+        found_skills = []
+        for skill in known_skills:
+            if re.search(r"\b" + re.escape(skill) + r"\b", job_description, re.I):
+                found_skills.append(skill)
+
+        # Split into required vs nice-to-have
+        required_skills = found_skills[:8] if found_skills else ["General Technical Engineering", "Problem Solving"]
+        nice_to_have_skills = found_skills[8:14] if len(found_skills) > 8 else ["Agile Methodology", "Cross-functional Collaboration"]
+
+        # 5. Domain Knowledge
+        domain_knowledge = []
+        if any(kw in jd_lower for kw in ["web", "frontend", "backend", "full stack"]):
+            domain_knowledge.append("Web Application Engineering")
+        if any(kw in jd_lower for kw in ["cloud", "aws", "gcp", "azure", "docker", "kubernetes"]):
+            domain_knowledge.append("Cloud & DevOps Infrastructure")
+        if any(kw in jd_lower for kw in ["database", "sql", "postgres", "nosql"]):
+            domain_knowledge.append("Database & Data Architecture")
+        if any(kw in jd_lower for kw in ["civil", "construction", "site", "building"]):
+            domain_knowledge.append("Civil Infrastructure & Construction Management")
+        if not domain_knowledge:
+            domain_knowledge = ["Software Systems Engineering"]
+
+        # 6. Key Responsibilities
+        key_responsibilities = []
+        for line in lines:
+            if line.startswith(("•", "-", "*", "▪")) and len(line) > 15:
+                cleaned_resp = line.lstrip("•-*▪ ").strip()
+                if len(cleaned_resp) < 120:
+                    key_responsibilities.append(cleaned_resp)
+        if not key_responsibilities:
+            key_responsibilities = [
+                f"Design, develop, and deliver high quality solutions for the {role_title} role",
+                "Collaborate with cross-functional teams to drive technical excellence",
+                "Ensure adherence to project timelines, quality standards, and architectural best practices"
+            ]
+
+        # 7. Education Requirements
+        education_requirements = None
+        edu_match = re.search(r"(?:bachelor|master|degree|b\.tech|b\.e\.|bs|ms|diploma)[^\n\.]*", jd_lower)
+        if edu_match:
+            education_requirements = edu_match.group(0).title()
+        else:
+            education_requirements = "Bachelor's Degree in relevant engineering discipline or equivalent experience"
+
+        return {
+            "role_title": role_title,
+            "required_skills": required_skills,
+            "nice_to_have_skills": nice_to_have_skills,
+            "experience_years_required": experience_years_required,
+            "experience_level": experience_level,
+            "domain_knowledge": domain_knowledge,
+            "key_responsibilities": key_responsibilities[:6],
+            "education_requirements": education_requirements,
+        }
 
     def _generate_mock_resume_data(self, text: str) -> dict:
         """Extract structured details from resume text using regex and section heuristics."""

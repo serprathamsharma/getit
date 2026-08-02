@@ -247,4 +247,74 @@ export function getResumeDownloadUrl(resumeId: string): string {
   return `${API_BASE}/api/resumes/${resumeId}/download`;
 }
 
+// ── Job Description Matching Engine Interfaces & API ─────────────
+
+export interface ParsedJobDescription {
+  role_title: string | null;
+  required_skills: string[];
+  nice_to_have_skills: string[];
+  experience_years_required: number | null;
+  experience_level: string | null;
+  domain_knowledge: string[];
+  key_responsibilities: string[];
+  education_requirements: string | null;
+}
+
+export interface ExperienceComparison {
+  candidate_years: number;
+  required_years: number;
+  meets_requirement: boolean;
+}
+
+export interface JobMatchResponse {
+  resume_id: string;
+  candidate_name: string | null;
+  match_percentage: number;
+  qualification_score: number;
+  verdict: string;
+  fit_summary: string;
+  parsed_jd: ParsedJobDescription;
+  matched_skills: string[];
+  unmatched_required_skills: string[];
+  key_strengths: string[];
+  skill_gaps: string[];
+  missing_prerequisites: string[];
+  experience_comparison: ExperienceComparison;
+  recommendation: string;
+}
+
+export async function parseJobDescription(jobDescription: string): Promise<ParsedJobDescription> {
+  const res = await fetch(`${API_BASE}/api/jobs/parse`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ job_description: jobDescription }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Parsing job description failed (${res.status})`);
+  }
+
+  return res.json();
+}
+
+export async function matchCandidateToJob(
+  resumeId: string,
+  jobDescription: string
+): Promise<JobMatchResponse> {
+  const res = await fetch(`${API_BASE}/api/jobs/match`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ resume_id: resumeId, job_description: jobDescription }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Job matching evaluation failed (${res.status})`);
+  }
+
+  return res.json();
+}
+
+
 
