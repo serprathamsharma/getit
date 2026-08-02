@@ -123,7 +123,7 @@ GitHub Event (push/PR/star/fork)
 
 ## 3. AI Pipeline Design
 
-### 3.1 The Core Insight: Multi-Layer Analysis
+### 3.1 The Core Insight: Multi Layer Analysis
 
 The key to avoiding generic summaries is **layered analysis**:
 
