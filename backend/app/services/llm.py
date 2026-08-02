@@ -92,11 +92,16 @@ PARSED CANDIDATE RESUME DATA:
 JOB DESCRIPTION:
 {job_description}
 
+CRITICAL EVALUATION & SCORING RULES:
+1. Assess domain and technical alignment objectively. If the candidate's background is in a completely different field (e.g. Civil Engineering, Construction, Accounting) and the job requires Software Engineering (Full Stack, React, Node, Python, etc.), the match_percentage MUST be LOW (between 5.0% and 25.0%), the verdict MUST be "Weak" or "Mismatch", and qualification_score MUST be low (1.0 to 2.5).
+2. Do NOT give artificial scores above 50% to candidates who lack the core technical competencies or prerequisites of the target job role.
+3. Be specific in listing missing prerequisites and skill gaps.
+
 Return a JSON object with exactly these fields:
 {{
   "match_percentage": 85.0,
   "qualification_score": 8.5,
-  "verdict": "Excellent | Strong | Moderate | Weak",
+  "verdict": "Excellent | Strong | Moderate | Weak | Mismatch",
   "fit_summary": "2-3 sentences evaluating why candidate is or isn't a strong fit",
   "key_strengths": ["List of 3-5 specific matching strengths"],
   "skill_gaps": ["List of 2-4 skill or experience gaps"],
@@ -649,33 +654,151 @@ class LLMService:
         }
 
     def _generate_mock_job_fit(self, parsed_resume: dict, job_description: str) -> dict:
-        """Generate candidate-to-job fit evaluation based on skill overlap."""
-        candidate_skills = set(s.lower() for s in parsed_resume.get("skills", []))
+        """Generate accurate candidate-to-job fit evaluation based on deep skill and domain overlap."""
+        import re
+
         jd_lower = job_description.lower()
 
-        matched_skills = [s for s in parsed_resume.get("skills", []) if s.lower() in jd_lower]
-        match_ratio = len(matched_skills) / max(len(candidate_skills), 1) if candidate_skills else 0.5
-        match_percentage = min(98.0, max(55.0, round(65.0 + match_ratio * 30.0, 1)))
-        qualification_score = round(match_percentage / 10.0, 1)
+        # Extract all text from candidate profile
+        candidate_text_parts = []
 
-        verdict = "Excellent" if match_percentage >= 85 else ("Strong" if match_percentage >= 75 else "Moderate")
+        # 1. Skills
+        candidate_skills = [s.strip() for s in parsed_resume.get("skills", []) if s.strip()]
+        candidate_text_parts.extend(candidate_skills)
+
+        # 2. Work History
+        for job in parsed_resume.get("work_history", []):
+            candidate_text_parts.append(job.get("role", ""))
+            candidate_text_parts.append(job.get("company", ""))
+            candidate_text_parts.append(job.get("description", ""))
+            candidate_text_parts.extend(job.get("highlights", []))
+
+        # 3. Education & Projects
+        for edu in parsed_resume.get("education", []):
+            candidate_text_parts.append(edu.get("degree", ""))
+            candidate_text_parts.append(edu.get("institution", ""))
+
+        for proj in parsed_resume.get("projects", []):
+            candidate_text_parts.append(proj.get("title", ""))
+            candidate_text_parts.append(proj.get("description", ""))
+            candidate_text_parts.extend(proj.get("technologies", []))
+
+        full_candidate_text = " ".join(candidate_text_parts).lower()
+
+        # Common Tech Keywords
+        tech_keywords = [
+            "python", "typescript", "javascript", "react", "next.js", "vue", "angular", "node", "express",
+            "fastapi", "django", "flask", "java", "spring", "c++", "c#", ".net", "go", "rust", "sql",
+            "postgres", "postgresql", "mysql", "mongodb", "redis", "docker", "kubernetes", "aws", "gcp",
+            "azure", "git", "github", "ci/cd", "rest", "api", "graphql", "microservices", "frontend",
+            "backend", "full stack", "fullstack", "software", "web"
+        ]
+
+        # Common Civil / Non-IT Keywords
+        civil_keywords = [
+            "civil", "construction", "mep", "billing", "reconciliation", "site", "structural", "contractor",
+            "tendering", "autocad", "primevera", "revit", "substation", "turnkey", "infrastructure"
+        ]
+
+        # Determine JD Domain
+        jd_requires_tech = any(re.search(r"\b" + re.escape(kw) + r"\b", jd_lower) for kw in tech_keywords)
+        jd_requires_civil = any(re.search(r"\b" + re.escape(kw) + r"\b", jd_lower) for kw in civil_keywords)
+
+        # Check candidate match
+        candidate_is_civil = any(re.search(r"\b" + re.escape(kw) + r"\b", full_candidate_text) for kw in civil_keywords)
+        candidate_is_tech = any(re.search(r"\b" + re.escape(kw) + r"\b", full_candidate_text) for kw in tech_keywords)
+
+        # Matched explicit skills
+        matched_skills = [s for s in candidate_skills if s.lower() in jd_lower]
+        tech_matches_in_text = [kw for kw in tech_keywords if kw in jd_lower and kw in full_candidate_text]
+
+        # Strict Domain Mismatch Check
+        domain_mismatch = (jd_requires_tech and candidate_is_civil and not candidate_is_tech) or (
+            jd_requires_tech and len(matched_skills) == 0 and len(tech_matches_in_text) == 0
+        )
+
+        if domain_mismatch:
+            match_percentage = round(12.5 + (len(matched_skills) * 2.0), 1)
+            qualification_score = 1.5
+            verdict = "Mismatch"
+
+            # Identify target role name from JD if possible
+            target_role = "Full Stack / Software Engineer"
+            if "frontend" in jd_lower:
+                target_role = "Frontend Engineer"
+            elif "backend" in jd_lower:
+                target_role = "Backend Engineer"
+            elif "civil" in jd_lower:
+                target_role = "Civil Project Engineer"
+
+            candidate_domain = "Civil Engineering & Construction Management" if candidate_is_civil else "Non-IT Field"
+
+            fit_summary = (
+                f"Candidate's background in {candidate_domain} exhibits major domain divergence "
+                f"from the target {target_role} position. None of the core required technical stack components "
+                f"(e.g., React, Node, Python, SQL) were detected in the candidate's dossier."
+            )
+            key_strengths = [
+                "Proven leadership in large-scale project execution and team management",
+                "Strong track record in vendor, contractor, and multidisciplinary coordination",
+                "Demonstrated commitment to project scheduling, budgeting, and quality standards"
+            ]
+            skill_gaps = [
+                "No evidence of Full Stack / Software Application Development experience",
+                "Lacks hands-on programming proficiency in modern web frameworks (React, TypeScript, Node)",
+                "Missing relational/NoSQL database design and API microservices architecture experience",
+                "No background in cloud deployment (AWS/GCP), CI/CD pipelines, or git workflows"
+            ]
+            missing_prerequisites = [
+                "Full Stack Web Development Experience",
+                "Core Programming Languages & Frameworks (React, Node, Python, SQL)",
+                "Computer Science or Software Engineering Degree / Credentials"
+            ]
+            recommendation = (
+                "Do NOT recommend proceeding for this software engineering position due to complete domain mismatch. "
+                "Candidate profile is best suited for Civil / Construction Project Management roles."
+            )
+        else:
+            total_candidate_skills = max(len(candidate_skills), 1)
+            match_ratio = len(matched_skills) / total_candidate_skills if candidate_skills else 0.4
+            match_percentage = min(96.0, max(20.0, round(35.0 + match_ratio * 60.0, 1)))
+            qualification_score = round(match_percentage / 10.0, 1)
+
+            if match_percentage >= 80:
+                verdict = "Excellent"
+            elif match_percentage >= 65:
+                verdict = "Strong"
+            elif match_percentage >= 45:
+                verdict = "Moderate"
+            else:
+                verdict = "Weak"
+
+            fit_summary = (
+                f"Candidate demonstrates alignment with target requirements. "
+                f"Key matching competencies in {', '.join(matched_skills[:4]) if matched_skills else 'relevant technical fields'} "
+                f"support qualification for the role."
+            )
+            key_strengths = [
+                f"Direct experience matching key stack requirements ({', '.join(matched_skills[:3]) if matched_skills else 'Core Technical Stack'})",
+                f"Proven track record with ~{parsed_resume.get('experience_years', 3)} years of engineering practice",
+                "Demonstrated capability in technical delivery and project execution"
+            ]
+            skill_gaps = [
+                "Specific enterprise scale experience should be verified during technical discussion",
+                "Deep dive into specialized architecture tooling recommended during interview stage"
+            ]
+            missing_prerequisites = []
+            recommendation = "Recommend proceeding to technical interview evaluation."
 
         return {
             "match_percentage": match_percentage,
             "qualification_score": qualification_score,
             "verdict": verdict,
-            "fit_summary": f"Candidate demonstrates strong background matching key job requirements. Technical skills in {', '.join(matched_skills[:4]) if matched_skills else 'core software engineering'} align well with the target role.",
-            "key_strengths": [
-                f"Direct experience with core role stack ({', '.join(matched_skills[:3]) if matched_skills else 'Modern Tech Stack'})",
-                f"Solid career progression with ~{parsed_resume.get('experience_years', 4)} years of practical engineering experience",
-                "Proven track record in system design, API development, and software delivery"
-            ],
-            "skill_gaps": [
-                "Specific domain specialization could be verified further during technical deep-dive",
-                "Detailed evidence for enterprise scale deployment needs additional interview probing"
-            ],
-            "missing_prerequisites": [],
-            "recommendation": "Recommend proceeding to technical interview round with focus on system architecture and hands-on coding."
+            "fit_summary": fit_summary,
+            "key_strengths": key_strengths,
+            "skill_gaps": skill_gaps,
+            "missing_prerequisites": missing_prerequisites,
+            "recommendation": recommendation
         }
 
 

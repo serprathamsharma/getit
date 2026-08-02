@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import ResumeUpload from "@/components/ResumeUpload";
 import ResumeProfileView from "@/components/ResumeProfileView";
 import { ParsedResume, listResumes } from "@/lib/api";
@@ -56,108 +57,89 @@ export default function ResumesPage() {
         <span>PRICE: FIVE CENTS</span>
       </div>
 
-      {/* Main Newspaper Masthead */}
+      {/* Main Newspaper Header */}
       <header
         style={{
-          padding: "28px 24px 16px",
-          maxWidth: "1240px",
+          padding: "20px 48px 12px",
+          maxWidth: "1280px",
           margin: "0 auto",
-          textAlign: "center",
         }}
       >
-        {/* Newspaper Title */}
-        <div style={{ display: "inline-flex", alignItems: "center", gap: "16px", marginBottom: "8px" }}>
-
-          <div
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
+          {/* Logo & Brand Link */}
+          <Link
+            href="/"
             style={{
-              width: 44,
-              height: 44,
-              border: "2px solid var(--border-dark)",
-              background: "var(--stamp-red)",
-              color: "white",
               display: "flex",
               alignItems: "center",
-              justifyContent: "center",
-              fontFamily: "'Playfair Display', serif",
-              fontSize: "24px",
-              fontWeight: 900,
-              boxShadow: "2px 2px 0px var(--border-dark)",
+              gap: "12px",
+              textDecoration: "none",
+              color: "var(--text-primary)",
             }}
           >
-            T
-          </div>
-          <h1
-            className="font-headline"
+            <div
+              style={{
+                width: 38,
+                height: 38,
+                border: "2px solid var(--border-dark)",
+                background: "var(--stamp-red)",
+                color: "white",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontFamily: "'Playfair Display', serif",
+                fontSize: "20px",
+                fontWeight: 900,
+                boxShadow: "2px 2px 0px var(--border-dark)",
+                flexShrink: 0,
+              }}
+            >
+              T
+            </div>
+            <div>
+              <span className="font-headline" style={{ fontSize: "24px", fontWeight: 900, letterSpacing: "0.02em", textTransform: "uppercase" }}>
+                THE TALENT TIMES
+              </span>
+              <div style={{ fontSize: "11px", fontFamily: "'Courier Prime', monospace", color: "var(--text-secondary)", letterSpacing: "0.05em" }}>
+                ENGINEER DIRECTORY & DOSSIER REGISTRY
+              </div>
+            </div>
+          </Link>
+
+          {/* Nav Links */}
+          <nav
             style={{
-              fontSize: "clamp(32px, 5.5vw, 64px)",
-              fontWeight: 900,
-              letterSpacing: "0.02em",
+              display: "flex",
+              gap: "24px",
+              fontSize: "12px",
+              fontFamily: "'Courier Prime', monospace",
+              fontWeight: 700,
               textTransform: "uppercase",
-              lineHeight: 0.95,
+              letterSpacing: "0.1em",
             }}
           >
-            THE TALENT TIMES
-          </h1>
+            <button
+              onClick={() => router.push("/")}
+              style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "'Courier Prime', monospace", fontSize: "12px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--text-primary)" }}
+            >
+              [ DASHBOARD ]
+            </button>
+            <button
+              onClick={() => router.push("/search")}
+              style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "'Courier Prime', monospace", fontSize: "12px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--text-primary)" }}
+            >
+              [ DIRECTORY ]
+            </button>
+            <button
+              onClick={() => router.push("/resumes")}
+              style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "'Courier Prime', monospace", fontSize: "12px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--text-primary)", borderBottom: "2px solid var(--border-dark)" }}
+            >
+              [ RESUME ]
+            </button>
+          </nav>
         </div>
 
-        {/* Edition Subhead */}
-        <p
-          style={{
-            fontFamily: "'Courier Prime', monospace",
-            fontSize: "12px",
-            color: "var(--text-secondary)",
-            letterSpacing: "0.12em",
-            textTransform: "uppercase",
-            marginTop: "6px",
-          }}
-        >
-          Resume Intelligence & Candidate Dossier Section • Special Edition
-        </p>
-
         {/* Double Rule Header Divider */}
-        <div className="rule-double" />
-
-        {/* Newspaper Navigation Links */}
-        <nav
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: "32px",
-            fontSize: "12px",
-            fontFamily: "'Courier Prime', monospace",
-            fontWeight: 700,
-            textTransform: "uppercase",
-            letterSpacing: "0.1em",
-            padding: "4px 0",
-          }}
-        >
-          <button
-            onClick={() => router.push("/")}
-            style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "'Courier Prime', monospace", fontSize: "12px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--text-primary)" }}
-          >
-            [ DASHBOARD ]
-          </button>
-          <button
-            onClick={() => router.push("/search")}
-            style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "'Courier Prime', monospace", fontSize: "12px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--stamp-red)" }}
-          >
-            [ DIRECTORY ]
-          </button>
-          <button
-            onClick={() => router.push("/resumes")}
-            style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "'Courier Prime', monospace", fontSize: "12px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--stamp-red)", borderBottom: "2px solid var(--stamp-red)" }}
-          >
-            [ RESUME AI ]
-          </button>
-          <button
-            onClick={() => router.push("/")}
-            style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "'Courier Prime', monospace", fontSize: "12px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--text-primary)" }}
-          >
-            [ CLASSIFIEDS ]
-          </button>
-        </nav>
-
-        {/* Double Rule Below Nav */}
         <div className="rule-double" />
       </header>
 

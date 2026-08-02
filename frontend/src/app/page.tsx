@@ -160,17 +160,16 @@ export default function Home() {
           <a href="#" style={{ color: "var(--text-primary)", textDecoration: "none" }}>[ DASHBOARD ]</a>
           <button
             onClick={() => router.push("/search")}
-            style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "'Courier Prime', monospace", fontSize: "12px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--stamp-red)" }}
+            style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "'Courier Prime', monospace", fontSize: "12px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--text-primary)" }}
           >
             [ DIRECTORY ]
           </button>
           <button
             onClick={() => router.push("/resumes")}
-            style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "'Courier Prime', monospace", fontSize: "12px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#6366f1" }}
+            style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "'Courier Prime', monospace", fontSize: "12px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--text-primary)" }}
           >
-            [ RESUME AI ]
+            [ RESUME ]
           </button>
-          <a href="#classifieds" style={{ color: "var(--text-primary)", textDecoration: "none" }}>[ CLASSIFIEDS ]</a>
 
         </nav>
 
@@ -479,75 +478,6 @@ export default function Home() {
                   Detects commit spam, artificial star farming, fork-heavy deception, and suspicious commit size anomalies.
                 </p>
               </div>
-            </div>
-          </div>
-
-          {/* Column 3: Classifieds & Advertisements */}
-          <div id="classifieds">
-            <div style={{ borderBottom: "2px solid var(--border-dark)", paddingBottom: "6px", marginBottom: "16px" }}>
-              <span style={{ fontFamily: "'Courier Prime', monospace", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--stamp-gold)" }}>
-                CLASSIFIEDS & ANNOUNCEMENTS
-              </span>
-            </div>
-
-            {/* Classified 1 */}
-            <div className="classified-box" style={{ marginBottom: "16px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                <span style={{ fontWeight: 700, fontFamily: "'Courier Prime', monospace", fontSize: "12px", color: "var(--stamp-red)" }}>
-                  WANTED: SYSTEMS PROGRAMMERS
-                </span>
-                <span className="tag-vintage" style={{ fontSize: "10px" }}>JOB NO. 402</span>
-              </div>
-              <p style={{ fontSize: "13px", lineHeight: 1.5, marginBottom: "8px" }}>
-                Seeking engineers proficient in C, Rust, and Linux Kernel architecture. High talent score required. Inquire within dossier search.
-              </p>
-              <div style={{ fontSize: "11px", fontFamily: "'Courier Prime', monospace", color: "var(--text-muted)", textAlign: "right" }}>
-                FREE DISCOVERY • INQUIRE NOW
-              </div>
-            </div>
-
-            {/* Classified 2 */}
-            <div className="classified-box" style={{ marginBottom: "16px", background: "var(--bg-tertiary)" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                <span style={{ fontWeight: 700, fontFamily: "'Courier Prime', monospace", fontSize: "12px" }}>
-                  NOTICE: BROWSE ALL DOSSIERS
-                </span>
-                <span style={{ fontFamily: "'Courier Prime', monospace", fontSize: "11px", fontWeight: 700, color: "var(--stamp-red)" }}>
-                  5 CENTS
-                </span>
-              </div>
-              <p style={{ fontSize: "13px", lineHeight: 1.5, marginBottom: "12px" }}>
-                Access the complete indexed directory of verified engineers, sorted by score, archetype, and technical specializations.
-              </p>
-              <button
-                className="btn-vintage"
-                onClick={() => router.push("/search")}
-                style={{ width: "100%", fontSize: "12px" }}
-              >
-                OPEN DIRECTORY GAZETTE →
-              </button>
-            </div>
-
-            {/* Subscription Tear-Off Coupon Box */}
-            <div className="coupon-box" style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "11px", fontFamily: "'Courier Prime', monospace", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--stamp-red)", marginBottom: "6px" }}>
-                ✂ TEAR OFF & SUBSCRIBE
-              </div>
-              <h5 className="font-headline" style={{ fontSize: "18px", fontWeight: 800, marginBottom: "6px" }}>
-                JOIN THE DAILY DISPATCH
-              </h5>
-              <p style={{ fontSize: "13px", color: "var(--text-secondary)", marginBottom: "12px" }}>
-                Receive weekly intelligence reports on top emerging technical talent directly in your inbox.
-              </p>
-              <input
-                type="email"
-                className="input-vintage"
-                placeholder="enter your email address..."
-                style={{ fontSize: "12px", padding: "8px 12px", marginBottom: "10px" }}
-              />
-              <button className="btn-vintage" style={{ width: "100%", fontSize: "11px" }}>
-                SUBSCRIBE TO GAZETTE
-              </button>
             </div>
           </div>
 
