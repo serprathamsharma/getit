@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "TalentRadar — AI-Powered Technical Talent Intelligence",
+  title: "GETIT",
   description:
     "Discover exceptional engineers through deep GitHub analysis. AI-powered profiles, evidence-based scoring, and actionable hiring intelligence.",
   keywords: [

@@ -123,7 +123,7 @@ export default function ResumeProfileView({ resume, onUpdateResume }: ResumeProf
     <div className="space-y-10">
       {/* ── Candidate Masthead Banner ─────────────────────────────────── */}
       <div className="vintage-box p-8 sm:p-10 bg-[#FAF3E6] border-2 border-[#151515]">
-        <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 pb-6 border-b-2 border-[#151515]">
+        <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 pb-6 border-b-2 border-[#8C241B]" style={{ marginBottom: '20px' }}>
           <div className="space-y-3 flex-1 min-w-0">
             {/* Dossier Badge & Format in single line above candidate name */}
             <div className="flex flex-wrap items-center gap-4 mb-4">
@@ -178,7 +178,7 @@ export default function ResumeProfileView({ resume, onUpdateResume }: ResumeProf
           </div>
         </div>
 
-        <div className="mt-5 flex items-center justify-between font-typewriter text-xs text-[#787167]">
+        <div className="mt-4 flex items-center justify-between font-typewriter text-xs text-[#787167]">
           <span>RECORD CREATED: {resume.created_at ? new Date(resume.created_at).toLocaleDateString() : "RECENT"}</span>
           <span>PARSED VIA: TALENT RADAR GAZETTE ENGINE</span>
         </div>
@@ -186,11 +186,11 @@ export default function ResumeProfileView({ resume, onUpdateResume }: ResumeProf
 
       {/* ── Candidate PDF & Original Document Viewer ───────────────────────── */}
       <div className="vintage-box p-8 sm:p-10 bg-[#FAF3E6] border-2 border-[#151515] space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b-2 border-[#151515]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b-2 border-[#8C241B]" style={{ marginBottom: '40px' }}>
           <div>
             <span className="stamp-badge mb-3 block w-max">CANDIDATE DOCUMENT SOURCE</span>
-            <h2 className="font-headline text-2xl font-bold uppercase text-[#151515] flex items-center gap-2">
-              <span>📄 Original Resume PDF & File Viewer</span>
+            <h2 className="font-headline text-2xl font-bold uppercase text-[#151515]">
+              Original Resume PDF & File Viewer
             </h2>
           </div>
           <div className="flex flex-wrap items-center gap-2 font-typewriter text-xs">
@@ -361,7 +361,7 @@ export default function ResumeProfileView({ resume, onUpdateResume }: ResumeProf
 
       {/* ── Job Fit Intelligence Section ───────────────────────────── */}
       <div className="vintage-box p-8 sm:p-10 bg-[#FAF3E6] border-2 border-[#151515] space-y-8">
-        <div className="flex items-center justify-between pb-4 border-b-2 border-[#151515]">
+        <div className="flex items-center justify-between pb-5 border-b-2 border-[#8C241B]" style={{ marginBottom: '40px' }}>
           <div>
             <div className="stamp-badge mb-3 inline-block">EVALUATION METRICS</div>
             <h2 className="font-headline text-2xl font-bold uppercase text-[#151515]">
@@ -471,7 +471,7 @@ export default function ResumeProfileView({ resume, onUpdateResume }: ResumeProf
 
       {/* ── Extracted Skills Matrix ─────────────────────────────────── */}
       <div className="vintage-box p-8 sm:p-10 bg-[#FAF3E6] border-2 border-[#151515]">
-        <div className="pb-4 mb-6 border-b-2 border-[#151515]">
+        <div className="pb-5 border-b-2 border-[#8C241B]" style={{ marginBottom: '40px' }}>
           <span className="stamp-badge mb-3 block w-max">TECHNICAL CAPABILITIES</span>
           <h3 className="font-headline text-2xl font-bold uppercase text-[#151515]">
             Extracted Skills Inventory
@@ -494,18 +494,14 @@ export default function ResumeProfileView({ resume, onUpdateResume }: ResumeProf
       {/* ── Work Experience Timeline with Right-Side Vertical Slider ──────────────────────── */}
       <div className="vintage-box p-6 sm:p-8 bg-[#FAF3E6] border-2 border-[#151515] space-y-4">
         {/* Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b-2 border-[#151515]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 border-b-2 border-[#8C241B]" style={{ marginBottom: '40px' }}>
           <div>
             <span className="stamp-badge mb-2 block w-max">CAREER HISTORY</span>
             <h3 className="font-headline text-2xl font-bold uppercase text-[#151515]">
               Employment Timeline & Track Record
             </h3>
           </div>
-          {resume.work_history && resume.work_history.length > 0 && (
-            <div className="font-typewriter text-xs font-bold text-[#8C241B] bg-[#EADCBF] px-3 py-1 border border-[#151515] shrink-0">
-              [ {resume.work_history.length} STATIONS EXTRACTED • SCROLL / SLIDE RIGHT ]
-            </div>
-          )}
+
         </div>
 
         {resume.work_history && resume.work_history.length > 0 ? (
@@ -581,45 +577,6 @@ export default function ResumeProfileView({ resume, onUpdateResume }: ResumeProf
               })}
             </div>
 
-            {/* Right-Side Vertical Slider Control Bar */}
-            <div className="w-14 sm:w-16 bg-[#EADCBF] border-2 border-[#151515] flex flex-col items-center justify-between p-1.5 shrink-0 select-none">
-              <button
-                type="button"
-                onClick={() => scrollToStation(0)}
-                title="Scroll to top station"
-                className="w-full text-center py-1 bg-[#FAF3E6] border border-[#151515] font-typewriter text-[10px] font-bold text-[#151515] hover:bg-[#8C241B] hover:text-white transition-colors"
-              >
-                ▲ TOP
-              </button>
-
-              {/* Vertical Station Slider Track */}
-              <div className="my-2 flex-1 flex flex-col items-center justify-center space-y-1.5 w-full overflow-y-auto">
-                {resume.work_history.map((_, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => scrollToStation(idx)}
-                    title={`Slide to role #${idx + 1}`}
-                    className={`w-9 h-7 font-typewriter text-[11px] font-bold border transition-all flex items-center justify-center ${
-                      activeScrollStation === idx
-                        ? "bg-[#8C241B] text-white border-[#151515] shadow-sm scale-110"
-                        : "bg-[#FAF3E6] text-[#151515] border-[#151515]/50 hover:border-[#151515] hover:bg-[#FAF3E6]"
-                    }`}
-                  >
-                    {idx + 1}
-                  </button>
-                ))}
-              </div>
-
-              <button
-                type="button"
-                onClick={() => scrollToStation(resume.work_history.length - 1)}
-                title="Scroll to bottom station"
-                className="w-full text-center py-1 bg-[#FAF3E6] border border-[#151515] font-typewriter text-[10px] font-bold text-[#151515] hover:bg-[#8C241B] hover:text-white transition-colors"
-              >
-                ▼ BTM
-              </button>
-            </div>
           </div>
         ) : (
           <p className="font-body text-sm text-[#787167] italic">No employment history listed.</p>
@@ -627,20 +584,20 @@ export default function ResumeProfileView({ resume, onUpdateResume }: ResumeProf
       </div>
 
       {/* ── Key Projects & Education Grid ──────────────────────────── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
         {/* Projects Card */}
-        <div className="vintage-box p-8 bg-[#FAF3E6] border-2 border-[#151515]">
-          <div className="pb-4 mb-6 border-b-2 border-[#151515]">
+        <div className="vintage-box p-8 sm:p-10 bg-[#FAF3E6] border-2 border-[#151515]">
+          <div className="pb-5 border-b-2 border-[#8C241B]" style={{ marginBottom: '40px' }}>
             <span className="stamp-badge mb-3 block w-max">PROJECT EVIDENCE</span>
             <h3 className="font-headline text-xl font-bold uppercase text-[#151515]">
               Highlighted Engineering Projects
             </h3>
           </div>
 
-          <div className="space-y-5">
+          <div className="space-y-6">
             {resume.projects && resume.projects.length > 0 ? (
               resume.projects.map((proj, idx) => (
-                <div key={idx} className="classified-box space-y-2">
+                <div key={idx} className="classified-box p-5 space-y-3">
                   <h4 className="font-headline text-lg font-bold text-[#151515]">{proj.title}</h4>
                   <p className="font-body text-sm text-[#4A453E] leading-relaxed">{proj.description}</p>
                   {proj.technologies && proj.technologies.length > 0 && (
@@ -661,19 +618,19 @@ export default function ResumeProfileView({ resume, onUpdateResume }: ResumeProf
         </div>
 
         {/* Education & Certifications Card */}
-        <div className="vintage-box p-8 bg-[#FAF3E6] border-2 border-[#151515] space-y-8">
+        <div className="vintage-box p-8 sm:p-10 bg-[#FAF3E6] border-2 border-[#151515] space-y-10">
           <div>
-            <div className="pb-4 mb-6 border-b-2 border-[#151515]">
+            <div className="pb-5 border-b-2 border-[#8C241B]" style={{ marginBottom: '40px' }}>
               <span className="stamp-badge mb-3 block w-max">ACADEMICS</span>
               <h3 className="font-headline text-xl font-bold uppercase text-[#151515]">
                 Education & Credentials
               </h3>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-6">
               {resume.education && resume.education.length > 0 ? (
                 resume.education.map((edu, idx) => (
-                  <div key={idx} className="classified-box space-y-1">
+                  <div key={idx} className="classified-box p-5 space-y-2">
                     <p className="font-headline text-lg font-bold text-[#151515]">{edu.degree}</p>
                     <p className="font-typewriter text-xs text-[#787167]">
                       {edu.institution} {edu.year && `• [ ${edu.year} ]`}
@@ -687,15 +644,15 @@ export default function ResumeProfileView({ resume, onUpdateResume }: ResumeProf
           </div>
 
           {resume.certifications && resume.certifications.length > 0 && (
-            <div>
-              <div className="pb-3 mb-4 border-b-2 border-[#151515]">
-                <h4 className="font-typewriter text-xs font-bold uppercase text-[#151515]">
+            <div style={{ marginTop: '40px' }}>
+              <div className="pb-5 border-b-2 border-[#8C241B]" style={{ marginBottom: '40px' }}>
+                <h4 className="font-headline text-xl font-bold uppercase text-[#151515]">
                   Certifications & Diplomas
                 </h4>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-4">
                 {resume.certifications.map((cert, idx) => (
-                  <span key={idx} className="tag-vintage border-[#8C241B] text-[#8C241B] whitespace-normal break-words max-w-full">
+                  <span key={idx} className="tag-vintage border-[#8C241B] text-[#8C241B] whitespace-normal break-words max-w-full py-2.5 px-4">
                     📜 {cert}
                   </span>
                 ))}
