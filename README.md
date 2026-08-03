@@ -1,4 +1,4 @@
-# TalentRadar (anti getit) 🗞️
+# GETIT 🗞️
 
 > **AI-Powered Technical Talent Intelligence Platform**  
 > Deep candidate profiling, GitHub engineering analysis, job fit evaluation, and tailored interview synthesis — wrapped in a Refined Vintage Gazette design.
