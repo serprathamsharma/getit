@@ -174,6 +174,14 @@ export default function ResumeProfileView({ resume, onUpdateResume }: ResumeProf
               <div className="tag-vintage font-bold border-2 border-[#8C241B] text-[#8C241B]">
                 ⏱ {resume.experience_years ? `${resume.experience_years} YRS EXP.` : "EXPERIENCED"}
               </div>
+              {githubUsername && (
+                <a
+                  href={`/profile/${githubUsername}`}
+                  className="px-3 py-1.5 bg-[#8C241B] text-white border-2 border-[#151515] font-typewriter text-xs font-bold uppercase hover:bg-[#6D1B15] transition-all flex items-center gap-1 shadow-sm text-decoration-none"
+                >
+                  ▣ View Profile & Questionnaire
+                </a>
+              )}
             </div>
           </div>
         </div>
@@ -419,7 +427,7 @@ export default function ResumeProfileView({ resume, onUpdateResume }: ResumeProf
                 return (
                   <div
                     key={idx}
-                    ref={(el) => (itemRefs.current[idx] = el)}
+                    ref={(el) => { itemRefs.current[idx] = el; }}
                     className={`border-l-2 border-[#151515] relative pb-6 space-y-2 transition-all duration-200 ${
                       activeScrollStation === idx ? "bg-[#EADCBF]/40 p-3 -ml-3 pl-9 border-l-4 border-[#8C241B]" : ""
                     }`}

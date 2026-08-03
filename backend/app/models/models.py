@@ -135,3 +135,22 @@ class Resume(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+
+class InterviewPlan(Base):
+    """Personalized interview plan for a candidate."""
+
+    __tablename__ = "interview_plans"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=generate_uuid)
+    engineer_id: Mapped[str | None] = mapped_column(String(36), ForeignKey("engineers.id"), nullable=True)
+    github_username: Mapped[str] = mapped_column(String(255), index=True)
+    candidate_name: Mapped[str | None] = mapped_column(String(255))
+    
+    questions: Mapped[list | None] = mapped_column(JSON)
+    overview_summary: Mapped[str | None] = mapped_column(Text)
+    recommended_duration_mins: Mapped[int] = mapped_column(Integer, default=60)
+    
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+

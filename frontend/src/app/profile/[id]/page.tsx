@@ -2,8 +2,9 @@
 
 import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
-import { getEngineer, type EngineerProfile } from "@/lib/api";
+import { getEngineer, generateInterviewPlan, type EngineerProfile, type InterviewPlanResponse } from "@/lib/api";
 import GitHubDashboard from "@/components/GitHubDashboard";
+import InterviewPlanView from "@/components/InterviewPlanView";
 import {
   ArrowLeft,
   ExternalLink,
@@ -26,6 +27,7 @@ import {
   Layers,
   GitFork,
   FileText,
+  Loader2,
 } from "lucide-react";
 
 export default function ProfilePage({
@@ -38,7 +40,32 @@ export default function ProfilePage({
   const [profile, setProfile] = useState<EngineerProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [activeTab, setActiveTab] = useState<"dossier" | "github">("dossier");
+  const [activeTab, setActiveTab] = useState<"dossier" | "github" | "interview">("dossier");
+
+  const [interviewPlan, setInterviewPlan] = useState<InterviewPlanResponse | null>(null);
+  const [loadingInterview, setLoadingInterview] = useState(false);
+  const [interviewError, setInterviewError] = useState("");
+
+  useEffect(() => {
+    if (activeTab === "interview" && profile && !interviewPlan && !loadingInterview) {
+      (async () => {
+        setLoadingInterview(true);
+        setInterviewError("");
+        try {
+          const plan = await generateInterviewPlan({
+            github_username: profile.github_username,
+            engineer_id: profile.id,
+            target_role: "Senior Software Engineer",
+          });
+          setInterviewPlan(plan);
+        } catch (err) {
+          setInterviewError(err instanceof Error ? err.message : "Failed to generate interview plan");
+        } finally {
+          setLoadingInterview(false);
+        }
+      })();
+    }
+  }, [activeTab, profile, interviewPlan, loadingInterview]);
 
   useEffect(() => {
     (async () => {
@@ -129,15 +156,24 @@ export default function ProfilePage({
             </span>
           )}
         </div>
-        <a
-          href={`https://github.com/${profile.github_username}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-vintage"
-          style={{ fontSize: "11px", textDecoration: "none", padding: "6px 14px" }}
-        >
-          VIEW GITHUB ↗
-        </a>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <button
+            onClick={() => setActiveTab("interview")}
+            className="btn-vintage"
+            style={{ fontSize: "11px", background: "var(--stamp-red)", color: "white", padding: "6px 14px", border: "1px solid var(--border-dark)", cursor: "pointer" }}
+          >
+            ▣ INTERVIEW QUESTIONNAIRE
+          </button>
+          <a
+            href={`https://github.com/${profile.github_username}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-vintage"
+            style={{ fontSize: "11px", textDecoration: "none", padding: "6px 14px" }}
+          >
+            VIEW GITHUB ↗
+          </a>
+        </div>
       </header>
 
       <div className="rule-double" style={{ maxWidth: "1280px", margin: "0 auto 0" }} />
@@ -157,6 +193,7 @@ export default function ProfilePage({
         {([
           { id: "dossier", label: "◉ DOSSIER FILE" },
           { id: "github", label: "◈ GITHUB ANALYSIS" },
+          { id: "interview", label: "▣ INTERVIEW QUESTIONNAIRE" },
         ] as const).map((tab) => (
           <button
             key={tab.id}
@@ -369,6 +406,44 @@ export default function ProfilePage({
         {/* Tab content switcher */}
         {activeTab === "github" && (
           <GitHubDashboard username={profile.github_username} />
+        )}
+
+        {activeTab === "interview" && (
+          <div>
+            {loadingInterview ? (
+              <div className="vintage-box p-12 text-center bg-[#FAF3E6] border-2 border-[#151515] flex flex-col items-center justify-center space-y-4">
+                <Loader2 className="w-8 h-8 text-[#8C241B] animate-spin" />
+                <h3 className="font-headline text-lg font-bold uppercase text-[#151515]">
+                  Synthesizing Technical Questionnaire for @{profile.github_username}...
+                </h3>
+                <p className="font-typewriter text-xs text-[#787167]">
+                  Analyzing repositories, frameworks, and architecture to build a 5-category interview plan.
+                </p>
+              </div>
+            ) : interviewError ? (
+              <div className="vintage-box p-8 text-center bg-[#FAF3E6] border-2 border-[#151515] space-y-3">
+                <h4 className="font-headline text-md font-bold text-[#8C241B] uppercase">
+                  Failed to Load Interview Questionnaire
+                </h4>
+                <p className="font-typewriter text-xs text-[#787167]">{interviewError}</p>
+                <button
+                  className="btn-vintage"
+                  onClick={() => {
+                    setInterviewError("");
+                    setInterviewPlan(null);
+                    setLoadingInterview(false);
+                  }}
+                >
+                  🔄 Retry Generation
+                </button>
+              </div>
+            ) : interviewPlan ? (
+              <InterviewPlanView
+                plan={interviewPlan}
+                onUpdatePlan={(updated) => setInterviewPlan(updated)}
+              />
+            ) : null}
+          </div>
         )}
 
         {activeTab === "dossier" && (

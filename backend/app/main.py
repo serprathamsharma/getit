@@ -12,6 +12,7 @@ from app.api.analysis import router as analysis_router
 from app.api.resumes import router as resumes_router
 from app.api.jobs import router as jobs_router
 from app.api.github import router as github_router
+from app.api.interview import router as interview_router
 
 # Configure logging
 logging.basicConfig(
@@ -55,6 +56,7 @@ app.include_router(analysis_router)
 app.include_router(resumes_router)
 app.include_router(jobs_router, prefix="/api")
 app.include_router(github_router)
+app.include_router(interview_router)
 
 
 

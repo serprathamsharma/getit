@@ -310,3 +310,68 @@ class GitHubDashboardResponse(BaseModel):
     last_analyzed_at: datetime | None = None
 
 
+# ── Interview Generator Schemas ───────────────────────────────────
+
+
+class InterviewQuestion(BaseModel):
+    id: str
+    category: str  # Conceptual, Code-Deep-Dive, System Design, Trade-Off Rationale, Problem Solving
+    question: str
+    context_reference: str | None = None  # e.g. "Repo: torvalds/linux • fs/ext4/super.c"
+    ideal_answer: str
+    red_flags: list[str] = []
+    probing_hints: list[str] = []
+    difficulty: str = "Medium"  # Easy, Medium, Hard
+    estimated_time_mins: int = 10
+    user_notes: str | None = None
+    is_asked: bool = False
+    rating: int | None = None  # 1-5 rating during interview
+
+
+class InterviewPlanGenerateRequest(BaseModel):
+    github_username: str | None = None
+    engineer_id: str | None = None
+    resume_id: str | None = None
+    target_role: str | None = "Senior Software Engineer"
+    custom_topics: list[str] = []
+
+
+class InterviewPlanResponse(BaseModel):
+    id: str
+    github_username: str
+    candidate_name: str | None = None
+    overview_summary: str | None = None
+    recommended_duration_mins: int = 60
+    questions: list[InterviewQuestion] = []
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class InterviewQuestionCreate(BaseModel):
+    category: str = "Code-Deep-Dive"
+    question: str
+    context_reference: str | None = None
+    ideal_answer: str
+    red_flags: list[str] = []
+    probing_hints: list[str] = []
+    difficulty: str = "Medium"
+    estimated_time_mins: int = 10
+
+
+class InterviewQuestionUpdate(BaseModel):
+    category: str | None = None
+    question: str | None = None
+    context_reference: str | None = None
+    ideal_answer: str | None = None
+    red_flags: list[str] | None = None
+    probing_hints: list[str] | None = None
+    difficulty: str | None = None
+    estimated_time_mins: int | None = None
+    user_notes: str | None = None
+    is_asked: bool | None = None
+    rating: int | None = None
+
+
+

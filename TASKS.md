@@ -86,14 +86,14 @@ This task list tracks the development of the 8 core features for **anti getit**.
 ---
 
 ### 6. 🎙️ Personalized Interview Generator
-- [ ] **6.1 Tailored Question Synthesis**
-  - [ ] Combine candidate resume details, GitHub code snippets, and architectural decisions to generate targeted questions.
-  - [ ] Create specialized technical questions focused on the candidate's actual codebase, design trade-offs, and frameworks used.
-- [ ] **6.2 Question Categorization**
-  - [ ] Group questions by category: Conceptual, Code-Deep-Dive, System Design, Trade-Off Rationale, and Problem Solving.
-- [ ] **6.3 UI & Interview Plan View**
-  - [ ] Display personalized interview questionnaire for interviewers.
-  - [ ] Allow filtering, editing, and exporting interview guides (PDF/Markdown).
+- [x] **6.1 Tailored Question Synthesis**
+  - [x] Combine candidate resume details, GitHub code snippets, and architectural decisions to generate targeted questions.
+  - [x] Create specialized technical questions focused on the candidate's actual codebase, design trade-offs, and frameworks used.
+- [x] **6.2 Question Categorization**
+  - [x] Group questions by category: Conceptual, Code-Deep-Dive, System Design, Trade-Off Rationale, and Problem Solving.
+- [x] **6.3 UI & Interview Plan View**
+  - [x] Display personalized interview questionnaire for interviewers.
+  - [x] Allow filtering, editing, and exporting interview guides (PDF/Markdown).
 
 ---
 

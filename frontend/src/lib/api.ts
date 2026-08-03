@@ -381,3 +381,142 @@ export async function getGitHubDashboard(username: string): Promise<GitHubDashbo
   return res.json();
 }
 
+// ── Interview Generator Engine Interfaces & API ──────────────────
+
+export interface InterviewQuestion {
+  id: string;
+  category: "Conceptual" | "Code-Deep-Dive" | "System Design" | "Trade-Off Rationale" | "Problem Solving" | string;
+  question: string;
+  context_reference: string | null;
+  ideal_answer: string;
+  red_flags: string[];
+  probing_hints: string[];
+  difficulty: "Easy" | "Medium" | "Hard" | string;
+  estimated_time_mins: number;
+  user_notes: string | null;
+  is_asked: boolean;
+  rating: number | null;
+}
+
+export interface InterviewPlanGenerateRequest {
+  github_username?: string;
+  engineer_id?: string;
+  resume_id?: string;
+  target_role?: string;
+  custom_topics?: string[];
+}
+
+export interface InterviewPlanResponse {
+  id: string;
+  github_username: string;
+  candidate_name: string | null;
+  overview_summary: string | null;
+  recommended_duration_mins: number;
+  questions: InterviewQuestion[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface InterviewQuestionCreate {
+  category?: string;
+  question: string;
+  context_reference?: string;
+  ideal_answer: string;
+  red_flags?: string[];
+  probing_hints?: string[];
+  difficulty?: string;
+  estimated_time_mins?: number;
+}
+
+export interface InterviewQuestionUpdate {
+  category?: string;
+  question?: string;
+  context_reference?: string;
+  ideal_answer?: string;
+  red_flags?: string[];
+  probing_hints?: string[];
+  difficulty?: string;
+  estimated_time_mins?: number;
+  user_notes?: string | null;
+  is_asked?: boolean;
+  rating?: number | null;
+}
+
+export async function generateInterviewPlan(req: InterviewPlanGenerateRequest): Promise<InterviewPlanResponse> {
+  const res = await fetch(`${API_BASE}/api/interview/generate`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(req),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Interview plan generation failed (${res.status})`);
+  }
+
+  return res.json();
+}
+
+export async function getInterviewPlan(identifier: string): Promise<InterviewPlanResponse> {
+  const res = await fetch(`${API_BASE}/api/interview/${identifier}`);
+  if (!res.ok) throw new Error(`Interview plan not found (${res.status})`);
+  return res.json();
+}
+
+export async function addInterviewQuestion(
+  identifier: string,
+  question: InterviewQuestionCreate
+): Promise<InterviewPlanResponse> {
+  const res = await fetch(`${API_BASE}/api/interview/${identifier}/questions`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(question),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Failed to add question (${res.status})`);
+  }
+
+  return res.json();
+}
+
+export async function updateInterviewQuestion(
+  identifier: string,
+  questionId: string,
+  update: InterviewQuestionUpdate
+): Promise<InterviewPlanResponse> {
+  const res = await fetch(`${API_BASE}/api/interview/${identifier}/questions/${questionId}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(update),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Failed to update question (${res.status})`);
+  }
+
+  return res.json();
+}
+
+export async function deleteInterviewQuestion(
+  identifier: string,
+  questionId: string
+): Promise<InterviewPlanResponse> {
+  const res = await fetch(`${API_BASE}/api/interview/${identifier}/questions/${questionId}`, {
+    method: "DELETE",
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Failed to delete question (${res.status})`);
+  }
+
+  return res.json();
+}
+
+export function getInterviewExportUrl(identifier: string): string {
+  return `${API_BASE}/api/interview/${identifier}/export`;
+}
+
