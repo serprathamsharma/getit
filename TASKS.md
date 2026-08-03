@@ -37,16 +37,16 @@ This task list tracks the development of the 8 core features for **anti getit**.
 ---
 
 ### 3. 🐙 GitHub Engineering Analysis
-- [ ] **3.1 GitHub API & Data Fetching**
-  - [ ] Implement GitHub OAuth / Personal Access Token integration.
-  - [ ] Fetch public repositories, commit logs, pull requests, code trees, languages, and open-source contributions.
-- [ ] **3.2 Static Code & Architecture Analysis**
-  - [ ] Analyze repository structure, modularity, and architectural patterns.
-  - [ ] Evaluate code quality metrics (linting, doc comments, test coverage, project complexity).
-  - [ ] Detect test suites, framework usage, and CI/CD workflows.
-- [ ] **3.3 UI & GitHub Dashboard**
-  - [ ] Build repository overview widgets (languages breakdown, commit activity heatmap, top repositories).
-  - [ ] Display repository quality metrics and architecture highlights.
+- [x] **3.1 GitHub API & Data Fetching**
+  - [x] Implement GitHub OAuth / Personal Access Token integration.
+  - [x] Fetch public repositories, commit logs, pull requests, code trees, languages, and open-source contributions.
+- [x] **3.2 Static Code & Architecture Analysis**
+  - [x] Analyze repository structure, modularity, and architectural patterns.
+  - [x] Evaluate code quality metrics (linting, doc comments, test coverage, project complexity).
+  - [x] Detect test suites, framework usage, and CI/CD workflows.
+- [x] **3.3 UI & GitHub Dashboard**
+  - [x] Build repository overview widgets (languages breakdown, commit activity heatmap, top repositories).
+  - [x] Display repository quality metrics and architecture highlights.
 
 ---
 

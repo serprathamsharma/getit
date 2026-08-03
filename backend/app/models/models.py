@@ -29,6 +29,7 @@ class Engineer(Base):
     followers: Mapped[int] = mapped_column(Integer, default=0)
     following: Mapped[int] = mapped_column(Integer, default=0)
     public_repos: Mapped[int] = mapped_column(Integer, default=0)
+    github_created_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
 
     # Computed profile data
     talent_score: Mapped[float | None] = mapped_column(Float)

@@ -3,6 +3,7 @@
 import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { getEngineer, type EngineerProfile } from "@/lib/api";
+import GitHubDashboard from "@/components/GitHubDashboard";
 import {
   ArrowLeft,
   ExternalLink,
@@ -37,6 +38,7 @@ export default function ProfilePage({
   const [profile, setProfile] = useState<EngineerProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [activeTab, setActiveTab] = useState<"dossier" | "github">("dossier");
 
   useEffect(() => {
     (async () => {
@@ -99,25 +101,6 @@ export default function ProfilePage({
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg-primary)", color: "var(--text-primary)" }}>
-      {/* Top Utility Bar */}
-      <div
-        style={{
-          borderBottom: "1px solid var(--border-dark)",
-          padding: "6px 24px",
-          fontSize: "11px",
-          fontFamily: "'Courier Prime', monospace",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          background: "var(--bg-secondary)",
-          letterSpacing: "0.05em",
-        }}
-      >
-        <span>OFFICIAL DOSSIER FILE NO. #{profile.id.slice(0, 8).toUpperCase()}</span>
-        <span style={{ fontWeight: 700 }}>THE TALENT TIMES • INTELLIGENCE REPORT</span>
-        <span>CONFIDENTIAL</span>
-      </div>
-
       {/* Header / Masthead Nav */}
       <header
         style={{
@@ -157,9 +140,49 @@ export default function ProfilePage({
         </a>
       </header>
 
-      <div className="rule-double" style={{ maxWidth: "1280px", margin: "0 auto 32px" }} />
+      <div className="rule-double" style={{ maxWidth: "1280px", margin: "0 auto 0" }} />
 
-      {/* Main Dossier Container */}
+      {/* Tab Navigation */}
+      <div
+        style={{
+          maxWidth: "1280px",
+          margin: "0 auto",
+          padding: "0 48px",
+          display: "flex",
+          gap: "0",
+          borderBottom: "2px solid var(--border-dark)",
+          marginBottom: "32px",
+        }}
+      >
+        {([
+          { id: "dossier", label: "◉ DOSSIER FILE" },
+          { id: "github", label: "◈ GITHUB ANALYSIS" },
+        ] as const).map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            style={{
+              padding: "12px 28px",
+              fontFamily: "'Courier Prime', monospace",
+              fontSize: "11px",
+              fontWeight: 700,
+              textTransform: "uppercase",
+              letterSpacing: "0.08em",
+              border: "none",
+              borderBottom: activeTab === tab.id ? "3px solid var(--stamp-red)" : "3px solid transparent",
+              background: "transparent",
+              color: activeTab === tab.id ? "var(--stamp-red)" : "var(--text-muted)",
+              cursor: "pointer",
+              transition: "color 0.15s, border-color 0.15s",
+              marginBottom: "-2px",
+            }}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Main Container */}
       <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 48px 80px" }}>
 
         {/* Dossier Banner / Hero Box */}
@@ -343,6 +366,13 @@ export default function ProfilePage({
           </div>
         )}
 
+        {/* Tab content switcher */}
+        {activeTab === "github" && (
+          <GitHubDashboard username={profile.github_username} />
+        )}
+
+        {activeTab === "dossier" && (
+        <>
         {/* Main 2-Column Newspaper Layout */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 360px", gap: "32px", alignItems: "start" }}>
 
@@ -650,6 +680,8 @@ export default function ProfilePage({
         </div>
 
         <div className="rule-double" style={{ marginTop: "60px" }} />
+        </>
+        )}
       </div>
     </div>
   );

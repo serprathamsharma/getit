@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { analyzeEngineer, getEngineerByUsername } from "@/lib/api";
 import {
@@ -30,6 +30,19 @@ export default function Home() {
   const [username, setUsername] = useState("");
   const [analyzing, setAnalyzing] = useState(false);
   const [error, setError] = useState("");
+  const [currentDateStr, setCurrentDateStr] = useState("");
+
+  useEffect(() => {
+    const now = new Date();
+    setCurrentDateStr(
+      now.toLocaleDateString("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    );
+  }, []);
 
   const handleAnalyze = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,25 +77,6 @@ export default function Home() {
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg-primary)", color: "var(--text-primary)" }}>
-      {/* Top Utility Bar */}
-      <div
-        style={{
-          borderBottom: "1px solid var(--border-dark)",
-          padding: "6px 24px",
-          fontSize: "11px",
-          fontFamily: "'Courier Prime', monospace",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          background: "var(--bg-secondary)",
-          letterSpacing: "0.05em",
-        }}
-      >
-        <span>EST. 2026 • VOLUME XCIX • NO. 365</span>
-        <span style={{ fontWeight: 700 }}>THE DAILY TALENT GAZETTE</span>
-        <span>PRICE: FIVE CENTS</span>
-      </div>
-
       {/* Main Newspaper Masthead */}
       <header
         style={{
@@ -137,44 +131,84 @@ export default function Home() {
             marginTop: "6px",
           }}
         >
-          All The Code That&apos;s Fit To Score • Special Edition • Saturday, August 1, 2026
+          All The Code That&apos;s Fit To Score • Special Edition • {currentDateStr || "Daily Edition"}
         </p>
 
         {/* Double Rule Header Divider */}
-        <div className="rule-double" />
+        <div className="rule-double" style={{ margin: "10px 0" }} />
 
         {/* Newspaper Navigation Links */}
         <nav
           style={{
             display: "flex",
             justifyContent: "center",
-            gap: "32px",
-            fontSize: "12px",
-            fontFamily: "'Courier Prime', monospace",
-            fontWeight: 700,
-            textTransform: "uppercase",
-            letterSpacing: "0.1em",
-            padding: "4px 0",
+            alignItems: "center",
+            gap: "36px",
+            padding: "2px 0",
+            flexWrap: "wrap",
           }}
         >
-          <a href="#" style={{ color: "var(--text-primary)", textDecoration: "none" }}>[ DASHBOARD ]</a>
+          <button
+            onClick={() => router.push("/")}
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              fontFamily: "'Courier Prime', monospace",
+              fontSize: "20px",
+              fontWeight: 800,
+              textTransform: "uppercase",
+              letterSpacing: "0.12em",
+              color: "var(--text-primary)",
+              padding: "2px 4px",
+              transition: "opacity 0.2s ease",
+            }}
+            className="hover:opacity-75"
+          >
+            [ DASHBOARD ]
+          </button>
           <button
             onClick={() => router.push("/search")}
-            style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "'Courier Prime', monospace", fontSize: "12px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--text-primary)" }}
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              fontFamily: "'Courier Prime', monospace",
+              fontSize: "20px",
+              fontWeight: 800,
+              textTransform: "uppercase",
+              letterSpacing: "0.12em",
+              color: "var(--text-primary)",
+              padding: "2px 4px",
+              transition: "opacity 0.2s ease",
+            }}
+            className="hover:opacity-75"
           >
             [ DIRECTORY ]
           </button>
           <button
             onClick={() => router.push("/resumes")}
-            style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "'Courier Prime', monospace", fontSize: "12px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--text-primary)" }}
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              fontFamily: "'Courier Prime', monospace",
+              fontSize: "20px",
+              fontWeight: 800,
+              textTransform: "uppercase",
+              letterSpacing: "0.12em",
+              color: "var(--text-primary)",
+              padding: "2px 4px",
+              transition: "opacity 0.2s ease",
+            }}
+            className="hover:opacity-75"
           >
             [ RESUME ]
           </button>
-
         </nav>
 
         {/* Double Rule Below Nav */}
-        <div className="rule-double" />
+        <div className="rule-double" style={{ margin: "10px 0" }} />
       </header>
 
       {/* Main Content Area */}
@@ -496,7 +530,7 @@ export default function Home() {
             paddingTop: "16px",
           }}
         >
-          <p>© 2026 THE TALENT GAZETTE • PRINTED ON VINTAGE PARCHMENT • ALL RIGHTS RESERVED</p>
+          <p>© {new Date().getFullYear()} THE TALENT GAZETTE • PRINTED ON VINTAGE PARCHMENT • ALL RIGHTS RESERVED</p>
         </footer>
       </main>
     </div>

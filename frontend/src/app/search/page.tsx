@@ -112,25 +112,6 @@ export default function SearchPage() {
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg-primary)", color: "var(--text-primary)" }}>
-      {/* Top Utility Bar */}
-      <div
-        style={{
-          borderBottom: "1px solid var(--border-dark)",
-          padding: "6px 24px",
-          fontSize: "11px",
-          fontFamily: "'Courier Prime', monospace",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          background: "var(--bg-secondary)",
-          letterSpacing: "0.05em",
-        }}
-      >
-        <span>CLASSIFIED DIRECTORY GAZETTE</span>
-        <span style={{ fontWeight: 700 }}>THE TALENT TIMES</span>
-        <span>PAGE B-12</span>
-      </div>
-
       {/* Main Newspaper Header */}
       <header
         style={{
@@ -185,29 +166,55 @@ export default function SearchPage() {
             style={{
               display: "flex",
               gap: "24px",
-              fontSize: "12px",
-              fontFamily: "'Courier Prime', monospace",
-              fontWeight: 700,
-              textTransform: "uppercase",
-              letterSpacing: "0.1em",
               alignItems: "center",
             }}
           >
             <button
               onClick={() => router.push("/")}
-              style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "'Courier Prime', monospace", fontSize: "12px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--text-primary)" }}
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                fontFamily: "'Courier Prime', monospace",
+                fontSize: "18px",
+                fontWeight: 800,
+                textTransform: "uppercase",
+                letterSpacing: "0.12em",
+                color: "var(--text-primary)",
+              }}
             >
               [ DASHBOARD ]
             </button>
             <button
               onClick={() => router.push("/search")}
-              style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "'Courier Prime', monospace", fontSize: "12px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--text-primary)", borderBottom: "2px solid var(--border-dark)" }}
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                fontFamily: "'Courier Prime', monospace",
+                fontSize: "18px",
+                fontWeight: 800,
+                textTransform: "uppercase",
+                letterSpacing: "0.12em",
+                color: "var(--stamp-red)",
+                borderBottom: "2px solid var(--stamp-red)",
+              }}
             >
               [ DIRECTORY ]
             </button>
             <button
               onClick={() => router.push("/resumes")}
-              style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "'Courier Prime', monospace", fontSize: "12px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--text-primary)" }}
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                fontFamily: "'Courier Prime', monospace",
+                fontSize: "18px",
+                fontWeight: 800,
+                textTransform: "uppercase",
+                letterSpacing: "0.12em",
+                color: "var(--text-primary)",
+              }}
             >
               [ RESUME ]
             </button>

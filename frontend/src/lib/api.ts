@@ -317,4 +317,67 @@ export async function matchCandidateToJob(
 }
 
 
+// ── GitHub Engineering Analysis Dashboard API ────────────────────
+
+export interface RepoQualityMetrics {
+  repo_full_name: string;
+  repo_url: string | null;
+  description: string | null;
+  language: string | null;
+  stars: number;
+  forks: number;
+  is_fork: boolean;
+  has_tests: boolean;
+  has_ci: boolean;
+  has_readme: boolean;
+  has_docs: boolean;
+  commit_count: number;
+  languages: Record<string, number>;
+  complexity: "low" | "medium" | "high";
+  quality_score: number;
+}
+
+export interface ArchitectureSignals {
+  has_ci_cd: boolean;
+  has_containerization: boolean;
+  has_documentation: boolean;
+  test_coverage_ratio: number;
+  readme_ratio: number;
+  avg_commits_per_repo: number;
+  avg_complexity: string;
+  original_repo_ratio: number;
+  account_age_years: number;
+  total_stars: number;
+  total_forks: number;
+  total_commits_sampled: number;
+  detected_frameworks: string[];
+}
+
+export interface CommitWeek {
+  week_label: string;
+  commit_count: number;
+}
+
+export interface GitHubDashboardData {
+  github_username: string;
+  name: string | null;
+  avatar_url: string | null;
+  bio: string | null;
+  followers: number;
+  public_repos: number;
+  account_age_years: number;
+  archetype: string | null;
+  talent_score: number | null;
+  language_distribution: Record<string, number>;
+  commit_activity: CommitWeek[];
+  repo_quality: RepoQualityMetrics[];
+  architecture: ArchitectureSignals;
+  last_analyzed_at: string | null;
+}
+
+export async function getGitHubDashboard(username: string): Promise<GitHubDashboardData> {
+  const res = await fetch(`${API_BASE}/api/github/${username}`);
+  if (!res.ok) throw new Error(`GitHub dashboard not found (${res.status})`);
+  return res.json();
+}
 
