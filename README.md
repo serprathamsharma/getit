@@ -16,7 +16,7 @@
 ### 📄 1. AI Resume Intelligence (`Completed`)
 - **Multi-Format Ingestion**: Supports PDF, DOCX, and plain text resume uploads with automated text cleaning pipelines.
 - **LLM Entity Extraction**: Automatically extracts candidate skills, experience timeline, education, key projects, and certifications into structured JSON.
-- **Visual Dossiers**: Renders clean, vintage newspaper-styled candidate profiles with interactive skill tag clouds and timeline controls.
+- **Visual Dossiers**: Renders clean, vintage newspaper-styled candidate profiles with interactive skill tag clouds and timeline controls
 
 ### 🎯 2. Job Description Matching (`Completed`)
 - **Role Requirement Parsing**: Parses job descriptions into mandatory skills, nice-to-haves, domain prerequisites, and experience targets.
