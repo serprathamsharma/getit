@@ -1,4 +1,4 @@
-# GetIt 🗞️
+# GETIT 🗞️
 
 > **AI-Powered Technical Talent Intelligence Platform**  
 > Deep candidate profiling, GitHub engineering analysis, job fit evaluation, and tailored interview synthesis — wrapped in a Refined Vintage Gazette design.
@@ -7,7 +7,7 @@
 
 ## 🚀 Overview
 
-**GetIt** is an AI-driven technical hiring  and engineering intelligence platform built to eliminate guess-work in technical recruiting. By combining structured resume parsing, deep GitHub static code analysis, custom job requirement matching, and intelligent technical interview plan generation, GetIt gives engineering leaders and interviewers actionable insights into candidates' true skills and code quality.
+**GetIt** is an AI-driven technical hiring and engineering intelligence platform built to eliminate guess-work in technical recruiting. By combining structured resume parsing, deep GitHub static code analysis, custom job requirement matching, and intelligent technical interview plan generation, GetIt gives engineering leaders and interviewers actionable insights into candidates' true skills and code quality.
 
 ---
 
