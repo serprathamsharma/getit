@@ -1,4 +1,4 @@
-# anti getit - Implementation Task List
+# GETIT - Implementation Task List
 
 This task list tracks the development of the 8 core features for **anti getit**.
 
