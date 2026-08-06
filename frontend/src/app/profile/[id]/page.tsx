@@ -157,13 +157,7 @@ export default function ProfilePage({
           )}
         </div>
         <div style={{ display: "flex", gap: "10px" }}>
-          <button
-            onClick={() => setActiveTab("interview")}
-            className="btn-vintage"
-            style={{ fontSize: "11px", background: "var(--stamp-red)", color: "white", padding: "6px 14px", border: "1px solid var(--border-dark)", cursor: "pointer" }}
-          >
-            ▣ INTERVIEW QUESTIONNAIRE
-          </button>
+          {/* Temporarily hidden interview questionnaire button */}
           <a
             href={`https://github.com/${profile.github_username}`}
             target="_blank"
@@ -193,7 +187,6 @@ export default function ProfilePage({
         {([
           { id: "dossier", label: "◉ DOSSIER FILE" },
           { id: "github", label: "◈ GITHUB ANALYSIS" },
-          { id: "interview", label: "▣ INTERVIEW QUESTIONNAIRE" },
         ] as const).map((tab) => (
           <button
             key={tab.id}
