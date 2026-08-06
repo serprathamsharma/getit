@@ -1,10 +1,10 @@
-# GETIT - Implementation Task List
+# Implementation Task List
 
-This task list tracks the development of the 8 core features for **anti getit**.
+This task list tracks the development of the 8 core features for **GETIT**.
 
 ---
 
-## 📋 Core Feature Breakdown & Development Tasks
+# Core Feature Breakdown & Development Tasks
 
 ### 1. 📄 AI Resume Intelligence
 - [x] **1.1 Resume Parsing & Extraction**
