@@ -29,7 +29,7 @@ async def init_db():
     """Create all tables on startup and auto-migrate missing columns."""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-        # Check and add columns if missing
+        # Check and add github_username column if missing in resumes table
         try:
             res = await conn.execute(text("PRAGMA table_info(resumes)"))
             columns = [row[1] for row in res.fetchall()]
@@ -37,10 +37,5 @@ async def init_db():
                 await conn.execute(text("ALTER TABLE resumes ADD COLUMN github_username VARCHAR(255)"))
             if columns and "file_data" not in columns:
                 await conn.execute(text("ALTER TABLE resumes ADD COLUMN file_data BLOB"))
-
-            res_eng = await conn.execute(text("PRAGMA table_info(engineers)"))
-            eng_columns = [row[1] for row in res_eng.fetchall()]
-            if eng_columns and "github_created_at" not in eng_columns:
-                await conn.execute(text("ALTER TABLE engineers ADD COLUMN github_created_at DATETIME"))
         except Exception as e:
             print("Auto-migration check notice:", e)

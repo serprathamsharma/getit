@@ -174,14 +174,6 @@ export default function ResumeProfileView({ resume, onUpdateResume }: ResumeProf
               <div className="tag-vintage font-bold border-2 border-[#8C241B] text-[#8C241B]">
                 ⏱ {resume.experience_years ? `${resume.experience_years} YRS EXP.` : "EXPERIENCED"}
               </div>
-              {githubUsername && (
-                <a
-                  href={`/profile/${githubUsername}`}
-                  className="px-3 py-1.5 bg-[#8C241B] text-white border-2 border-[#151515] font-typewriter text-xs font-bold uppercase hover:bg-[#6D1B15] transition-all flex items-center gap-1 shadow-sm text-decoration-none"
-                >
-                  ▣ View Profile & Questionnaire
-                </a>
-              )}
             </div>
           </div>
         </div>
@@ -209,7 +201,7 @@ export default function ResumeProfileView({ resume, onUpdateResume }: ResumeProf
               {showPdfPreview ? "[ HIDE PDF PREVIEW ▲ ]" : "[ VIEW PDF PREVIEW ▼ ]"}
             </button>
             <a
-              href={getResumeFileUrl(resume.id)}
+              href={resume.file_url || getResumeFileUrl(resume.id)}
               target="_blank"
               rel="noreferrer"
               className="btn-vintage text-xs py-2 px-4 inline-flex items-center gap-1"
@@ -218,7 +210,8 @@ export default function ResumeProfileView({ resume, onUpdateResume }: ResumeProf
               <span>OPEN TAB ↗</span>
             </a>
             <a
-              href={getResumeDownloadUrl(resume.id)}
+              href={resume.file_url || getResumeDownloadUrl(resume.id)}
+              download={resume.filename}
               className="btn-vintage text-xs py-2 px-4 inline-flex items-center gap-1"
               style={{ background: "#8C241B", color: "white", textDecoration: "none" }}
             >
@@ -230,16 +223,24 @@ export default function ResumeProfileView({ resume, onUpdateResume }: ResumeProf
         {showPdfPreview && (
           <div className="space-y-4 pt-1">
             <div className="border-2 border-[#151515] bg-[#2A2825] rounded-none overflow-hidden shadow-inner">
-              <iframe
-                src={`${getResumeFileUrl(resume.id)}#toolbar=0&navpanes=0`}
-                className="w-full h-[540px] border-none bg-white"
-                title={`Resume Document - ${resume.filename}`}
-              />
+              {resume.file_url ? (
+                <iframe
+                  src={`${resume.file_url}#toolbar=0&navpanes=0`}
+                  className="w-full h-[540px] border-none bg-white"
+                  title={`Resume Document - ${resume.filename}`}
+                />
+              ) : (
+                <iframe
+                  src={`${getResumeFileUrl(resume.id)}#toolbar=0&navpanes=0`}
+                  className="w-full h-[540px] border-none bg-white"
+                  title={`Resume Document - ${resume.filename}`}
+                />
+              )}
             </div>
             <div className="flex items-center justify-between text-xs font-typewriter text-[#787167]">
               <span>FILE: {resume.filename} ({resume.file_format.toUpperCase()})</span>
               <a
-                href={getResumeFileUrl(resume.id)}
+                href={resume.file_url || getResumeFileUrl(resume.id)}
                 target="_blank"
                 rel="noreferrer"
                 className="underline hover:text-[#8C241B]"
@@ -311,7 +312,7 @@ export default function ResumeProfileView({ resume, onUpdateResume }: ResumeProf
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {githubProfile.top_repos.slice(0, 4).map((repo, idx) => (
-                      <div key={idx} className="p-4 border-2 border-[#151515] bg-[#FAF3E6]">
+                      <div key={idx} className="p-4 border-2 border-[#151515] bg-[#FAF3E6] flex flex-col gap-2">
                         <div className="flex items-center justify-between">
                           <a
                             href={repo.repo_url || `https://github.com/${repo.repo_full_name}`}
@@ -319,21 +320,31 @@ export default function ResumeProfileView({ resume, onUpdateResume }: ResumeProf
                             rel="noreferrer"
                             className="font-headline text-sm font-bold text-[#151515] hover:underline"
                           >
-                            {repo.repo_full_name}
+                            📁 {repo.repo_full_name}
                           </a>
                           <span className="font-typewriter text-xs font-bold text-[#8C241B]">
                             ★ {repo.stars}
                           </span>
                         </div>
-                        {repo.description && (
-                          <p className="font-body text-xs text-[#4A453E] mt-1.5 leading-relaxed line-clamp-2">
-                            {repo.description}
-                          </p>
+
+                        {(repo.readme_summary || repo.description) && (
+                          <div className="bg-[#8C241B]/5 border-l-2 border-[#8C241B] p-2 text-xs font-body italic text-[#151515] leading-relaxed">
+                            <span className="font-typewriter not-italic text-[10px] font-bold text-[#8C241B] block mb-0.5">
+                              📜 README SUMMARY & BUILD:
+                            </span>
+                            {repo.readme_summary || repo.description}
+                          </div>
                         )}
-                        {repo.language && (
-                          <span className="tag-vintage text-[10px] mt-2">
-                            {repo.language}
-                          </span>
+
+                        {repo.tech_stack && repo.tech_stack.length > 0 && (
+                          <div className="flex items-center gap-1.5 flex-wrap mt-1">
+                            <span className="font-typewriter text-[10px] font-bold text-[#787167]">TECH:</span>
+                            {repo.tech_stack.map((tech, tIdx) => (
+                              <span key={tIdx} className="font-typewriter text-[10px] font-bold px-1.5 py-0.5 bg-[#EADCBF] border border-[#151515] text-[#1B5E55]">
+                                {tech}
+                              </span>
+                            ))}
+                          </div>
                         )}
                       </div>
                     ))}

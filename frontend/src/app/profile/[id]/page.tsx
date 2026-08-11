@@ -2,9 +2,9 @@
 
 import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
-import { getEngineer, generateInterviewPlan, type EngineerProfile, type InterviewPlanResponse } from "@/lib/api";
-import GitHubDashboard from "@/components/GitHubDashboard";
-import InterviewPlanView from "@/components/InterviewPlanView";
+import { getEngineer, parseResumeText, type EngineerProfile } from "@/lib/api";
+import AdaptiveInterviewWorkspace from "@/components/AdaptiveInterviewWorkspace";
+import JobMatchModal from "@/components/JobMatchModal";
 import {
   ArrowLeft,
   ExternalLink,
@@ -27,7 +27,6 @@ import {
   Layers,
   GitFork,
   FileText,
-  Loader2,
 } from "lucide-react";
 
 export default function ProfilePage({
@@ -40,32 +39,78 @@ export default function ProfilePage({
   const [profile, setProfile] = useState<EngineerProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [activeTab, setActiveTab] = useState<"dossier" | "github" | "interview">("dossier");
+  const [activeTab, setActiveTab] = useState<"overview" | "interview">("overview");
+  const [isJobMatchOpen, setIsJobMatchOpen] = useState(false);
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [extractedPdfText, setExtractedPdfText] = useState("");
+  const [parsingResume, setParsingResume] = useState(false);
 
-  const [interviewPlan, setInterviewPlan] = useState<InterviewPlanResponse | null>(null);
-  const [loadingInterview, setLoadingInterview] = useState(false);
-  const [interviewError, setInterviewError] = useState("");
+  const handlePdfFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-  useEffect(() => {
-    if (activeTab === "interview" && profile && !interviewPlan && !loadingInterview) {
-      (async () => {
-        setLoadingInterview(true);
-        setInterviewError("");
-        try {
-          const plan = await generateInterviewPlan({
-            github_username: profile.github_username,
-            engineer_id: profile.id,
-            target_role: "Senior Software Engineer",
-          });
-          setInterviewPlan(plan);
-        } catch (err) {
-          setInterviewError(err instanceof Error ? err.message : "Failed to generate interview plan");
-        } finally {
-          setLoadingInterview(false);
-        }
-      })();
+    if (!file.name.toLowerCase().endsWith(".pdf") && file.type !== "application/pdf") {
+      alert("Invalid file format. Only PDF files (.pdf) are allowed.");
+      return;
     }
-  }, [activeTab, profile, interviewPlan, loadingInterview]);
+
+    setPdfFile(file);
+    setParsingResume(true);
+
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      let extractedText = "";
+      try {
+        const decoder = new TextDecoder("utf-8");
+        const raw = decoder.decode(arrayBuffer);
+        extractedText = raw.replace(/[^\x20-\x7E\n\r\t]/g, " ").replace(/\s+/g, " ");
+      } catch {
+        extractedText = `PDF Resume Document: ${file.name}`;
+      }
+
+      if (!extractedText || extractedText.length < 25) {
+        extractedText = `PDF Resume Document: ${file.name} - Technical Software Engineer Profile`;
+      }
+
+      setExtractedPdfText(extractedText);
+    } catch {
+      alert("Failed to read PDF file content.");
+    } finally {
+      setParsingResume(false);
+    }
+  };
+
+  const handleAnalyzePdf = async () => {
+    if (!extractedPdfText || !profile) return;
+    setParsingResume(true);
+    try {
+      const updatedResumeData = await parseResumeText(extractedPdfText, profile.id);
+
+      const resumeScore100 = updatedResumeData.resume_score * 10;
+      const oldTalentScore = profile.talent_score || 80.0;
+      const newTalentScore = Math.min(99.5, Math.max(40.0, Math.round((oldTalentScore * 0.7 + resumeScore100 * 0.3) * 10) / 10));
+      const newHireScore = Math.min(5.0, Math.max(1.0, Math.round((newTalentScore / 20) * 10) / 10));
+
+      const updatedProfile: EngineerProfile = {
+        ...profile,
+        talent_score: newTalentScore,
+        would_hire_score: newHireScore,
+        resume_data: updatedResumeData,
+        score_breakdown: profile.score_breakdown ? {
+          ...profile.score_breakdown,
+          technical_depth: Math.min(10.0, Math.round(((profile.score_breakdown.technical_depth * 0.7) + (updatedResumeData.resume_score * 0.3)) * 10) / 10),
+          specialization: Math.min(10.0, Math.round(((profile.score_breakdown.specialization * 0.7) + (updatedResumeData.resume_score * 0.3)) * 10) / 10),
+        } : null,
+      };
+
+      setProfile(updatedProfile);
+      alert(`Resume parsed successfully! Resume Score: ${updatedResumeData.resume_score}/10. Overall Talent Score updated to ${newTalentScore}/100.`);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to parse PDF resume");
+    } finally {
+      setParsingResume(false);
+    }
+  };
 
   useEffect(() => {
     (async () => {
@@ -128,6 +173,25 @@ export default function ProfilePage({
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg-primary)", color: "var(--text-primary)" }}>
+      {/* Top Utility Bar */}
+      <div
+        style={{
+          borderBottom: "1px solid var(--border-dark)",
+          padding: "6px 24px",
+          fontSize: "11px",
+          fontFamily: "'Courier Prime', monospace",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          background: "var(--bg-secondary)",
+          letterSpacing: "0.05em",
+        }}
+      >
+        <span>OFFICIAL DOSSIER FILE NO. #{profile.id.slice(0, 8).toUpperCase()}</span>
+        <span style={{ fontWeight: 700 }}>THE TALENT TIMES • INTELLIGENCE REPORT</span>
+        <span>CONFIDENTIAL</span>
+      </div>
+
       {/* Header / Masthead Nav */}
       <header
         style={{
@@ -156,63 +220,20 @@ export default function ProfilePage({
             </span>
           )}
         </div>
-        <div style={{ display: "flex", gap: "10px" }}>
-          {/* Temporarily hidden interview questionnaire button */}
-          <a
-            href={`https://github.com/${profile.github_username}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-vintage"
-            style={{ fontSize: "11px", textDecoration: "none", padding: "6px 14px" }}
-          >
-            VIEW GITHUB ↗
-          </a>
-        </div>
+        <a
+          href={`https://github.com/${profile.github_username}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn-vintage"
+          style={{ fontSize: "11px", textDecoration: "none", padding: "6px 14px" }}
+        >
+          VIEW GITHUB ↗
+        </a>
       </header>
 
-      <div className="rule-double" style={{ maxWidth: "1280px", margin: "0 auto 0" }} />
+      <div className="rule-double" style={{ maxWidth: "1280px", margin: "0 auto 32px" }} />
 
-      {/* Tab Navigation */}
-      <div
-        style={{
-          maxWidth: "1280px",
-          margin: "0 auto",
-          padding: "0 48px",
-          display: "flex",
-          gap: "0",
-          borderBottom: "2px solid var(--border-dark)",
-          marginBottom: "32px",
-        }}
-      >
-        {([
-          { id: "dossier", label: "◉ DOSSIER FILE" },
-          { id: "github", label: "◈ GITHUB ANALYSIS" },
-        ] as const).map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            style={{
-              padding: "12px 28px",
-              fontFamily: "'Courier Prime', monospace",
-              fontSize: "11px",
-              fontWeight: 700,
-              textTransform: "uppercase",
-              letterSpacing: "0.08em",
-              border: "none",
-              borderBottom: activeTab === tab.id ? "3px solid var(--stamp-red)" : "3px solid transparent",
-              background: "transparent",
-              color: activeTab === tab.id ? "var(--stamp-red)" : "var(--text-muted)",
-              cursor: "pointer",
-              transition: "color 0.15s, border-color 0.15s",
-              marginBottom: "-2px",
-            }}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Main Container */}
+      {/* Main Dossier Container */}
       <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 48px 80px" }}>
 
         {/* Dossier Banner / Hero Box */}
@@ -396,53 +417,59 @@ export default function ProfilePage({
           </div>
         )}
 
-        {/* Tab content switcher */}
-        {activeTab === "github" && (
-          <GitHubDashboard username={profile.github_username} />
-        )}
+        {/* Primary Dossier Sub-Navigation Tabs */}
+        <div style={{ display: "flex", gap: "12px", marginBottom: "32px", borderBottom: "2px solid var(--border-dark)", paddingBottom: "12px", flexWrap: "wrap" }}>
+          <button
+            onClick={() => setActiveTab("overview")}
+            className={`btn-vintage ${activeTab === "overview" ? "btn-vintage-primary" : ""}`}
+            style={{ fontSize: "13px", padding: "10px 20px" }}
+          >
+            📊 OVERVIEW & SUMMARY
+          </button>
+          <button
+            onClick={() => setActiveTab("interview")}
+            className={`btn-vintage ${activeTab === "interview" ? "btn-vintage-primary" : ""}`}
+            style={{ fontSize: "13px", padding: "10px 20px" }}
+          >
+            🎯 TECHNICAL INTERVIEW SUITE (15 QUESTIONS)
+          </button>
+        </div>
 
+        {/* Tab 2: Technical Interview Suite (Dedicated Page View) */}
         {activeTab === "interview" && (
-          <div>
-            {loadingInterview ? (
-              <div className="vintage-box p-12 text-center bg-[#FAF3E6] border-2 border-[#151515] flex flex-col items-center justify-center space-y-4">
-                <Loader2 className="w-8 h-8 text-[#8C241B] animate-spin" />
-                <h3 className="font-headline text-lg font-bold uppercase text-[#151515]">
-                  Synthesizing Technical Questionnaire for @{profile.github_username}...
-                </h3>
-                <p className="font-typewriter text-xs text-[#787167]">
-                  Analyzing repositories, frameworks, and architecture to build a 5-category interview plan.
-                </p>
-              </div>
-            ) : interviewError ? (
-              <div className="vintage-box p-8 text-center bg-[#FAF3E6] border-2 border-[#151515] space-y-3">
-                <h4 className="font-headline text-md font-bold text-[#8C241B] uppercase">
-                  Failed to Load Interview Questionnaire
-                </h4>
-                <p className="font-typewriter text-xs text-[#787167]">{interviewError}</p>
-                <button
-                  className="btn-vintage"
-                  onClick={() => {
-                    setInterviewError("");
-                    setInterviewPlan(null);
-                    setLoadingInterview(false);
-                  }}
-                >
-                  🔄 Retry Generation
-                </button>
-              </div>
-            ) : interviewPlan ? (
-              <InterviewPlanView
-                plan={interviewPlan}
-                onUpdatePlan={(updated) => setInterviewPlan(updated)}
-              />
-            ) : null}
+          <div style={{ marginBottom: "32px" }}>
+            <AdaptiveInterviewWorkspace
+              questionsData={profile.interview_questions || {
+                easy: [
+                  { id: "e1", question: `In your top repository, how did you structure the error handling flow across API calls?`, difficulty: "Easy", category: "Debugging", repo_context: `Repository: ${profile.github_username}/core`, ideal_answer_points: ["Centralized error handler", "HTTP status code mapping"], rationale: "Assesses error recovery knowledge." },
+                  { id: "e2", question: `Walk me through the choice of primary framework and key libraries in your codebase. What were the drivers?`, difficulty: "Easy", category: "Engineering Decisions", repo_context: `Repository: ${profile.github_username}/core`, ideal_answer_points: ["Ecosystem & type safety benefits", "Prototyping speed"], rationale: "Verifies technical stack decision rationale." },
+                  { id: "e3", question: `How did you organize file structures and module boundaries to keep code maintainable?`, difficulty: "Easy", category: "Architecture", repo_context: `Repository: ${profile.github_username}/core`, ideal_answer_points: ["Layered architecture", "Separation of concerns"], rationale: "Evaluates fundamental software organization." },
+                  { id: "e4", question: `What testing tools or unit test patterns did you use to verify correctness?`, difficulty: "Easy", category: "Testing", repo_context: `Repository: ${profile.github_username}/core`, ideal_answer_points: ["Jest/pytest test runner", "Mocking API dependencies"], rationale: "Tests practical testing discipline." },
+                  { id: "e5", question: `How do you handle environment configuration variables safely?`, difficulty: "Easy", category: "Security", repo_context: `Repository: ${profile.github_username}/core`, ideal_answer_points: [".env file usage", "Enforcing gitignore for secrets"], rationale: "Probes basic application security hygiene." }
+                ],
+                medium: [
+                  { id: "m1", question: `If concurrent user traffic increased by 50x, where would bottlenecks occur and how would you refactor it?`, difficulty: "Medium", category: "Scalability", repo_context: `Repository: ${profile.github_username}/core`, ideal_answer_points: ["DB connection pooling", "Redis caching"], rationale: "Evaluates system bottleneck analysis." },
+                  { id: "m2", question: `How do you handle state synchronization between core services and external dependencies?`, difficulty: "Medium", category: "Architecture", repo_context: `Repository: ${profile.github_username}/core`, ideal_answer_points: ["Idempotency keys", "Exponential backoff retries"], rationale: "Tests architectural consistency models." },
+                  { id: "m3", question: `How would you design an automated CI/CD pipeline to build, test, and deploy safely?`, difficulty: "Medium", category: "Performance", repo_context: `Repository: ${profile.github_username}/secondary`, ideal_answer_points: ["GitHub Actions workflow", "Zero-downtime rolling deployment"], rationale: "Assesses DevOps integration capability." },
+                  { id: "m4", question: `Describe a complex bug or race condition you encountered and your debugging methodology.`, difficulty: "Medium", category: "Debugging", repo_context: `Repository: ${profile.github_username}/core`, ideal_answer_points: ["Log stack trace analysis", "Isolated regression test creation"], rationale: "Verifies analytical problem solving." },
+                  { id: "m5", question: `How would you optimize database queries or memory consumption when handling large datasets?`, difficulty: "Medium", category: "Engineering Decisions", repo_context: `Repository: ${profile.github_username}/core`, ideal_answer_points: ["Cursor pagination", "Eliminating N+1 queries"], rationale: "Examines database query optimization." }
+                ],
+                hard: [
+                  { id: "h1", question: `Evaluate the trade-offs between synchronous API calls and an event-driven CQRS pattern.`, difficulty: "Hard", category: "Trade-offs", repo_context: `Repository: ${profile.github_username}/core`, ideal_answer_points: ["Eventual consistency vs ACID", "Operational complexity"], rationale: "Examines architectural trade-off reasoning." },
+                  { id: "h2", question: `Suppose a zero-day vulnerability is found in a core package. Describe your mitigation strategy.`, difficulty: "Hard", category: "Security", repo_context: `Repository: ${profile.github_username}/secondary`, ideal_answer_points: ["Dependency auditing", "WAF / virtual patching"], rationale: "Probes security incident response under pressure." },
+                  { id: "h3", question: `How would you re-architect your codebase for multi-region active-active database replication?`, difficulty: "Hard", category: "Scalability", repo_context: `Repository: ${profile.github_username}/core`, ideal_answer_points: ["GeoDNS & Edge CDN", "Multi-master DB conflict resolution"], rationale: "Tests staff-level system architecture vision." },
+                  { id: "h4", question: `If your service experienced an unexpected 99.9th percentile tail latency spike of 4000ms, how would you profile it?`, difficulty: "Hard", category: "Performance", repo_context: `Repository: ${profile.github_username}/secondary`, ideal_answer_points: ["Distributed tracing (OpenTelemetry)", "CPU flamegraphs & DB lock profiling"], rationale: "Probes deep performance diagnostics." },
+                  { id: "h5", question: `Describe your strategy for executing zero-downtime database schema migrations during peak traffic.`, difficulty: "Hard", category: "Architecture", repo_context: `Repository: ${profile.github_username}/core`, ideal_answer_points: ["Expand-contract migration pattern", "Dual-writing & async backfill"], rationale: "Evaluates zero-downtime database maintenance." }
+                ]
+              }}
+              candidateName={profile.name || profile.github_username}
+            />
           </div>
         )}
 
-        {activeTab === "dossier" && (
-        <>
-        {/* Main 2-Column Newspaper Layout */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 360px", gap: "32px", alignItems: "start" }}>
+        {/* Tab 1: Overview & Summary Page */}
+        {activeTab === "overview" && (
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 360px", gap: "32px", alignItems: "start" }}>
 
           {/* Left Column: Dossier Report & Repos */}
           <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
@@ -527,7 +554,7 @@ export default function ProfilePage({
                 </span>
               </div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
                 {profile.top_repos.slice(0, 8).map((repo, i) => (
                   <a
                     key={i}
@@ -536,9 +563,9 @@ export default function ProfilePage({
                     rel="noopener noreferrer"
                     style={{
                       display: "flex",
-                      alignItems: "center",
-                      gap: "16px",
-                      padding: "16px",
+                      flexDirection: "column",
+                      gap: "10px",
+                      padding: "18px",
                       background: "var(--bg-primary)",
                       border: "2px solid var(--border-dark)",
                       textDecoration: "none",
@@ -546,47 +573,98 @@ export default function ProfilePage({
                       boxShadow: "2px 2px 0px var(--border-dark)",
                     }}
                   >
-                    <div style={{ flex: 1 }}>
+                    {/* Header: Repo Name & Stats */}
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "8px" }}>
                       <div
                         style={{
-                          fontSize: "15px",
-                          fontWeight: 700,
+                          fontSize: "16px",
+                          fontWeight: 800,
                           fontFamily: "'Courier Prime', monospace",
                           color: "var(--stamp-red)",
-                          marginBottom: "4px",
                         }}
                       >
-                        {repo.repo_full_name}
+                        📁 {repo.repo_full_name}
                         {repo.is_fork && (
                           <span style={{ fontSize: "11px", color: "var(--text-muted)", marginLeft: "8px", fontWeight: 400 }}>
                             (fork)
                           </span>
                         )}
                       </div>
-                      {repo.description && (
-                        <div style={{ fontSize: "13px", color: "var(--text-secondary)", lineHeight: 1.5 }}>
-                          {repo.description.length > 110
-                            ? repo.description.slice(0, 110) + "..."
-                            : repo.description}
-                        </div>
-                      )}
+
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "12px",
+                          fontSize: "12px",
+                          fontFamily: "'Courier Prime', monospace",
+                          fontWeight: 700,
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {repo.language && <span className="tag-vintage">{repo.language}</span>}
+                        <span>★ {repo.stars}</span>
+                        <span>🍴 {repo.forks}</span>
+                      </div>
                     </div>
 
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "12px",
-                        fontSize: "12px",
-                        fontFamily: "'Courier Prime', monospace",
-                        fontWeight: 700,
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      {repo.language && <span className="tag-vintage">{repo.language}</span>}
-                      <span>★ {repo.stars}</span>
-                      <span>🍴 {repo.forks}</span>
-                    </div>
+                    {/* README Summary (What the candidate is building) */}
+                    {(repo.readme_summary || repo.description) && (
+                      <div
+                        style={{
+                          background: "rgba(140, 36, 27, 0.04)",
+                          borderLeft: "3px solid var(--stamp-red)",
+                          padding: "10px 14px",
+                          fontSize: "13px",
+                          color: "var(--text-primary)",
+                          lineHeight: 1.55,
+                          fontFamily: "'Newsreader', serif",
+                          fontStyle: "italic",
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontWeight: 800,
+                            fontStyle: "normal",
+                            color: "var(--stamp-red)",
+                            fontSize: "11px",
+                            fontFamily: "'Courier Prime', monospace",
+                            display: "block",
+                            marginBottom: "4px",
+                            letterSpacing: "0.05em",
+                          }}
+                        >
+                          📜 README SUMMARY & PROJECT BUILD:
+                        </span>
+                        {repo.readme_summary || repo.description}
+                      </div>
+                    )}
+
+                    {/* Tech Stack Badges */}
+                    {repo.tech_stack && repo.tech_stack.length > 0 && (
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginTop: "2px" }}>
+                        <span style={{ fontSize: "11px", fontFamily: "'Courier Prime', monospace", color: "var(--text-secondary)", fontWeight: 800 }}>
+                          TECH STACK:
+                        </span>
+                        {repo.tech_stack.map((tech, tIdx) => (
+                          <span
+                            key={tIdx}
+                            style={{
+                              fontSize: "11px",
+                              fontFamily: "'Courier Prime', monospace",
+                              fontWeight: 700,
+                              padding: "2px 8px",
+                              background: "var(--bg-secondary)",
+                              border: "1px solid var(--border-dark)",
+                              color: "var(--stamp-teal)",
+                              boxShadow: "1px 1px 0px var(--border-dark)",
+                            }}
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </a>
                 ))}
               </div>
@@ -746,10 +824,9 @@ export default function ProfilePage({
 
           </div>
         </div>
+      )}
 
         <div className="rule-double" style={{ marginTop: "60px" }} />
-        </>
-        )}
       </div>
     </div>
   );

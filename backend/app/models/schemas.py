@@ -97,6 +97,7 @@ class EngineerProfile(BaseModel):
     frameworks: list[str] | None = None
     domains: list[str] | None = None
     gaming_warnings: list[str] | None = None
+    interview_questions: dict | None = None
 
     # Score breakdown
     score_breakdown: ScoreBreakdown | None = None
@@ -238,140 +239,43 @@ class JobMatchResponse(BaseModel):
     experience_comparison: ExperienceComparison
     recommendation: str = ""
 
-# ── GitHub Engineering Analysis Schemas ──────────────────────────
 
-
-class RepoQualityMetrics(BaseModel):
-    """Per-repository quality signals."""
-    repo_full_name: str
-    repo_url: str | None = None
-    description: str | None = None
-    language: str | None = None
-    stars: int = 0
-    forks: int = 0
-    is_fork: bool = False
-    has_tests: bool = False
-    has_ci: bool = False
-    has_readme: bool = False
-    has_docs: bool = False
-    commit_count: int = 0
-    languages: dict = {}
-    complexity: str = "low"  # low | medium | high
-    quality_score: int = 0  # 0-100 computed from signals
-
-
-class ArchitectureSignals(BaseModel):
-    """Aggregate architecture and engineering quality signals."""
-    has_ci_cd: bool = False
-    has_containerization: bool = False
-    has_documentation: bool = False
-    test_coverage_ratio: float = 0.0   # 0.0 – 1.0
-    readme_ratio: float = 0.0
-    avg_commits_per_repo: float = 0.0
-    avg_complexity: str = "low"
-    original_repo_ratio: float = 0.0
-    account_age_years: float = 0.0
-    total_stars: int = 0
-    total_forks: int = 0
-    total_commits_sampled: int = 0
-    detected_frameworks: list[str] = []
-
-
-class CommitWeek(BaseModel):
-    """One week of commit activity for the heatmap."""
-    week_label: str        # e.g. "2024-W32"
-    commit_count: int = 0
-
-
-class GitHubDashboardResponse(BaseModel):
-    """Full GitHub engineering analysis dashboard data."""
-    github_username: str
-    name: str | None = None
-    avatar_url: str | None = None
-    bio: str | None = None
-    followers: int = 0
-    public_repos: int = 0
-    account_age_years: float = 0.0
-    archetype: str | None = None
-    talent_score: float | None = None
-
-    # Language distribution (name → percentage)
-    language_distribution: dict[str, float] = {}
-
-    # Commit activity (last 52 weeks)
-    commit_activity: list[CommitWeek] = []
-
-    # Per-repo quality breakdown
-    repo_quality: list[RepoQualityMetrics] = []
-
-    # Top-level architecture signals
-    architecture: ArchitectureSignals
-
-    last_analyzed_at: datetime | None = None
-
-
-# ── Interview Generator Schemas ───────────────────────────────────
+# ── Interview Intelligence Schemas ─────────────────────────────────
 
 
 class InterviewQuestion(BaseModel):
     id: str
-    category: str  # Conceptual, Code-Deep-Dive, System Design, Trade-Off Rationale, Problem Solving
     question: str
-    context_reference: str | None = None  # e.g. "Repo: torvalds/linux • fs/ext4/super.c"
-    ideal_answer: str
-    red_flags: list[str] = []
-    probing_hints: list[str] = []
-    difficulty: str = "Medium"  # Easy, Medium, Hard
-    estimated_time_mins: int = 10
-    user_notes: str | None = None
-    is_asked: bool = False
-    rating: int | None = None  # 1-5 rating during interview
+    difficulty: str
+    category: str
+    repo_context: str
+    ideal_answer_points: list[str]
+    rationale: str
 
 
-class InterviewPlanGenerateRequest(BaseModel):
-    github_username: str | None = None
-    engineer_id: str | None = None
-    resume_id: str | None = None
-    target_role: str | None = "Senior Software Engineer"
-    custom_topics: list[str] = []
+class InterviewSuite(BaseModel):
+    easy: list[InterviewQuestion]
+    medium: list[InterviewQuestion]
+    hard: list[InterviewQuestion]
 
 
-class InterviewPlanResponse(BaseModel):
-    id: str
-    github_username: str
-    candidate_name: str | None = None
-    overview_summary: str | None = None
-    recommended_duration_mins: int = 60
-    questions: list[InterviewQuestion] = []
-    created_at: datetime
-    updated_at: datetime
-
-    model_config = {"from_attributes": True}
+class AdaptiveFollowupRequest(BaseModel):
+    original_question: str
+    category: str
+    difficulty: str
+    repo_context: str | None = None
+    user_response_rating: str  # "correct", "partially_correct", "incorrect"
+    candidate_answer_notes: str | None = None
 
 
-class InterviewQuestionCreate(BaseModel):
-    category: str = "Code-Deep-Dive"
-    question: str
-    context_reference: str | None = None
-    ideal_answer: str
-    red_flags: list[str] = []
-    probing_hints: list[str] = []
-    difficulty: str = "Medium"
-    estimated_time_mins: int = 10
-
-
-class InterviewQuestionUpdate(BaseModel):
-    category: str | None = None
-    question: str | None = None
-    context_reference: str | None = None
-    ideal_answer: str | None = None
-    red_flags: list[str] | None = None
-    probing_hints: list[str] | None = None
-    difficulty: str | None = None
-    estimated_time_mins: int | None = None
-    user_notes: str | None = None
-    is_asked: bool | None = None
-    rating: int | None = None
+class AdaptiveFollowupResponse(BaseModel):
+    rating: str
+    follow_up_question: str
+    harder_question: str
+    easier_question: str
+    alternative_scenario: str
+    deeper_architecture_question: str
+    guidance_notes: str
 
 
 

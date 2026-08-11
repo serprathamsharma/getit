@@ -242,15 +242,6 @@ class AnalyzerService:
         # Prepare language data
         lang_dist = metrics.get("language_distribution", {})
 
-        # Extract GitHub created_at
-        gh_created_at_dt = None
-        created_at_str = user_data.get("created_at")
-        if created_at_str:
-            try:
-                gh_created_at_dt = datetime.fromisoformat(created_at_str.replace("Z", "+00:00")).replace(tzinfo=None)
-            except (ValueError, TypeError):
-                pass
-
         if engineer:
             # Update existing
             engineer.name = user_data.get("name")
@@ -263,8 +254,6 @@ class AnalyzerService:
             engineer.followers = user_data.get("followers", 0)
             engineer.following = user_data.get("following", 0)
             engineer.public_repos = user_data.get("public_repos", 0)
-            if gh_created_at_dt:
-                engineer.github_created_at = gh_created_at_dt
         else:
             # Create new
             engineer = Engineer(
@@ -280,7 +269,6 @@ class AnalyzerService:
                 followers=user_data.get("followers", 0),
                 following=user_data.get("following", 0),
                 public_repos=user_data.get("public_repos", 0),
-                github_created_at=gh_created_at_dt,
             )
             db.add(engineer)
 
@@ -333,8 +321,6 @@ class AnalyzerService:
                 existing_repo.analysis_data = {
                     "languages": rd.get("languages", {}),
                     "commit_count": len(rd.get("commits", [])),
-                    "contents": rd.get("contents", []),
-                    "file_count": len(rd.get("contents", []) or []),
                 }
                 existing_repo.analyzed_at = datetime.utcnow()
             else:
@@ -350,8 +336,6 @@ class AnalyzerService:
                     analysis_data={
                         "languages": rd.get("languages", {}),
                         "commit_count": len(rd.get("commits", [])),
-                        "contents": rd.get("contents", []),
-                        "file_count": len(rd.get("contents", []) or []),
                     },
                     analyzed_at=datetime.utcnow(),
                 )

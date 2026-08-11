@@ -38,6 +38,25 @@ export default function ResumesPage() {
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg-primary)", color: "var(--text-primary)" }}>
+      {/* Top Utility Bar */}
+      <div
+        style={{
+          borderBottom: "1px solid var(--border-dark)",
+          padding: "6px 24px",
+          fontSize: "11px",
+          fontFamily: "'Courier Prime', monospace",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          background: "var(--bg-secondary)",
+          letterSpacing: "0.05em",
+        }}
+      >
+        <span>EST. 2026 • VOLUME XCIX • NO. 365</span>
+        <span style={{ fontWeight: 700 }}>THE DAILY TALENT GAZETTE</span>
+        <span>PRICE: FIVE CENTS</span>
+      </div>
+
       {/* Main Newspaper Header */}
       <header
         style={{
@@ -91,56 +110,29 @@ export default function ResumesPage() {
           <nav
             style={{
               display: "flex",
-              gap: "24px",
-              alignItems: "center",
+              gap: "32px",
+              fontSize: "16px",
+              fontFamily: "'Courier Prime', monospace",
+              fontWeight: 800,
+              textTransform: "uppercase",
+              letterSpacing: "0.12em",
             }}
           >
             <button
               onClick={() => router.push("/")}
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                fontFamily: "'Courier Prime', monospace",
-                fontSize: "18px",
-                fontWeight: 800,
-                textTransform: "uppercase",
-                letterSpacing: "0.12em",
-                color: "var(--text-primary)",
-              }}
+              style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "'Courier Prime', monospace", fontSize: "16px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--text-primary)" }}
             >
               [ DASHBOARD ]
             </button>
             <button
               onClick={() => router.push("/search")}
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                fontFamily: "'Courier Prime', monospace",
-                fontSize: "18px",
-                fontWeight: 800,
-                textTransform: "uppercase",
-                letterSpacing: "0.12em",
-                color: "var(--text-primary)",
-              }}
+              style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "'Courier Prime', monospace", fontSize: "16px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--text-primary)" }}
             >
               [ DIRECTORY ]
             </button>
             <button
               onClick={() => router.push("/resumes")}
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                fontFamily: "'Courier Prime', monospace",
-                fontSize: "18px",
-                fontWeight: 800,
-                textTransform: "uppercase",
-                letterSpacing: "0.12em",
-                color: "var(--stamp-red)",
-                borderBottom: "2px solid var(--stamp-red)",
-              }}
+              style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "'Courier Prime', monospace", fontSize: "16px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--text-primary)", borderBottom: "2px solid var(--border-dark)" }}
             >
               [ RESUME ]
             </button>
